@@ -1,42 +1,66 @@
-# 🗓️ Nolio
+<p align="center">
+<table>
+  <tr>
+    <td width="90">
+      <img src="screenshot/nolio.png" width="80" alt="Nolio Logo"/>
+    </td>
+    <td>
+      <h1 style="margin:0;">Nolio</h1>
+      <p  style="margin:0;">
+        A calm, calendar-first todo app for Linux.<br/>
+        Built with Flutter. Designed for focus.
+      </p>
+    </td>
+  </tr>
+</table>
+</p>
 
-**Nolio** is a minimal, calendar-based todo app built with **Flutter**, focused on simplicity, clarity, and a clean desktop experience on Linux.
+<p align="center">
+  <a href="https://aur.archlinux.org/packages/nolio">
+    <img src="https://img.shields.io/aur/version/nolio?label=AUR%20(nolio)&logo=archlinux&style=for-the-badge&color=FC528C"/>
+  </a>
+  <a href="https://aur.archlinux.org/packages/nolio-bin">
+    <img src="https://img.shields.io/aur/version/nolio-bin?label=AUR%20(nolio-bin)&logo=archlinux&style=for-the-badge&color=FC528C"/>
+  </a>
+  <a href="https://github.com/Grey-007/nolio/releases">
+    <img src="https://img.shields.io/github/v/release/Grey-007/nolio?include_prereleases&label=release&style=for-the-badge&color=FC528C"/>
+  </a>
+  <a href="LICENSE">
+    <img src="https://img.shields.io/github/license/Grey-007/nolio?style=for-the-badge&color=FC528C"/>
+  </a>
+  <img src="https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter&style=for-the-badge&color=FC528C"/>
+  <img src="https://img.shields.io/badge/platform-Linux--only-blue?logo=linux&style=for-the-badge&color=FC528C"/>
+  <img src="https://img.shields.io/badge/display-Wayland%20%7C%20X11-success?style=for-the-badge&color=FC528C"/>
+</p>
 
-> Designed to stay out of your way while helping you plan your day.
+---
 
-[![AUR](https://img.shields.io/aur/version/nolio?label=AUR%20(nolio)&logo=archlinux&style=for-the-badge)](https://aur.archlinux.org/packages/nolio)
-[![AUR-bin](https://img.shields.io/aur/version/nolio-bin?label=AUR%20(nolio-bin)&logo=archlinux&style=for-the-badge)](https://aur.archlinux.org/packages/nolio-bin)
-[![GitHub release](https://img.shields.io/github/v/release/Grey-007/nolio?include_prereleases&label=release&style=for-the-badge)](https://github.com/Grey-007/nolio/releases)
-[![License](https://img.shields.io/github/license/Grey-007/nolio?style=for-the-badge)](LICENSE)
-[![Flutter](https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter&style=for-the-badge)](https://flutter.dev)
-[![Platform](https://img.shields.io/badge/platform-Linux--only-blue?logo=linux&style=for-the-badge)](https://www.kernel.org/)
-[![Display](https://img.shields.io/badge/display-Wayland%20%7C%20X11-success?style=for-the-badge)](https://wayland.freedesktop.org/)
+## 🧠 Philosophy
 
+Most productivity apps overwhelm you with features.
+
+Nolio does the opposite.
+
+- Your **day** is the interface  
+- Tasks live directly inside the **calendar**
+- No dashboards  
+- No nested project systems  
+- No subscription  
+- No tracking  
+
+Just a clean, distraction-free planning surface built specifically for Linux desktop users.
+
+---
 
 ## ✨ Features
 
-* 📅 Calendar-centric task management
-* 🎨 Clean, minimal UI with consistent spacing
-* ⌨️ Keyboard & mouse friendly
-* 🐧 Native Linux desktop app (Wayland & X11)
-
----
-## v0.4.0 
-
-### ✨ Improvements
-
-* Timer accuracy and responsiveness significantly improved
-* Added **timer stats card** for quick session insights
-* Refined layout, spacing, and visual hierarchy
-* Smoother animations and interactions
-* Weekly view *(introduced in v0.3.0)* now stabilized
-
-### 🪟 Behavior & Stability
-
-* Better window handling
-* General performance and reliability improvements
-
-> UI may look different on first launch — this is intentional.
+- 📅 Calendar-centric task management
+- 🧩 Click a date → add tasks instantly
+- 🎨 Clean, minimal UI with consistent spacing
+- ⌨️ Keyboard & mouse friendly workflow
+- 🐧 Native Linux desktop app
+- 🖥️ Works on Wayland & X11
+- 💾 Local storage (SQLite)
 
 ---
 
@@ -44,26 +68,25 @@
 
 | | | |
 |---|---|---|
-| ![]( screenshot/screenshot1.png) | ![]( screenshot/screenshot2.png) | ![]( screenshot/screenshot3.png) |
-| ![]( screenshot/screenshot4.png) | ![]( screenshot/screenshot5.png) | ![]( screenshot/screenshot6.png) |
-| ![]( screenshot/screenshot7.png) | ![]( screenshot/screenshot8.png) | ![]( screenshot/screenshot9.png) |
-
+| ![](screenshot/ss1.png) | ![](screenshot/ss2.png) | ![](screenshot/ss3.png) |
+| ![](screenshot/ss4.png) | ![](screenshot/ss5.png) | ![](screenshot/ss6.png) |
+| ![](screenshot/ss7.png) | ![](screenshot/ss8.png) | ![](screenshot/ss9.png) |
 
 ---
 
 ## 📦 Installation (Arch Linux)
 
-### Option 1: Binary (Recommended)
+### 🔹 Recommended — Prebuilt Binary
 
-Fastest install, no build required.
+Fastest install. No Flutter required.
 
 ```bash
 yay -S nolio-bin
-```
+````
 
-### Option 2: Build from Source
+### 🔹 Build from Source
 
-Builds the app locally using Flutter.
+Build locally using Flutter.
 
 ```bash
 yay -S nolio
@@ -79,21 +102,22 @@ Launch from terminal:
 nolio
 ```
 
-Or start it from your application launcher.
+Or open it from your application launcher (Rofi, GNOME, KDE, etc.).
 
 ---
 
 ## 🛠️ Built With
 
-* **Flutter** (Linux desktop)
-* **Dart**
+* Flutter (Linux Desktop)
+* Dart
 * GTK-based Linux runtime
+* SQLite (local persistence)
 
 ---
 
 ## 🧩 Development
 
-Clone the repo:
+Clone the repository:
 
 ```bash
 git clone https://github.com/Grey-007/nolio.git
@@ -107,11 +131,22 @@ flutter pub get
 flutter run -d linux
 ```
 
-Build release:
+Build release binary:
 
 ```bash
 flutter build linux --release
 ```
+
+---
+
+## 🛣️ Roadmap
+
+Planned improvements:
+
+* [ ] Recurring tasks
+* [ ] Faster keyboard quick-add
+* [ ] Backup / export support
+* [ ] Performance refinements
 
 ---
 
@@ -120,7 +155,8 @@ flutter build linux --release
 Contributions, bug reports, and UI feedback are welcome.
 
 * Open an issue for bugs or suggestions
-* Keep changes focused and clean
+* Keep pull requests focused and clean
+* Follow existing UI spacing principles
 * UI/UX feedback is especially appreciated
 
 ---
@@ -136,4 +172,3 @@ See [`LICENSE`](LICENSE) for details.
 
 Built and maintained by **Grey-007**.
 
----
