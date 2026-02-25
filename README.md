@@ -1,19 +1,20 @@
-<p align="center">
-<table>
-  <tr>
-    <td width="90">
-      <img src="screenshot/nolio.png" width="80" alt="Nolio Logo"/>
-    </td>
-    <td>
-      <h1 style="margin:0;">Nolio</h1>
-      <p  style="margin:0;">
-        A calm, calendar-first todo app for Linux.<br/>
-        Built with Flutter. Designed for focus.
-      </p>
-    </td>
-  </tr>
-</table>
-</p>
+<div align="center">
+
+<div style="display:inline-block; text-align:left; padding:20px 28px; border:1px solid #2a2a2a; border-radius:10px;">
+
+  <div style="display:flex; align-items:center; gap:16px;">
+    <img src="screenshot/nolio.png" width="48" alt="Nolio Logo"/>
+    <h1 style="margin:0;">Nolio</h1>
+  </div>
+
+  <p style="margin:10px 0 0 64px; color:#cfcfcf;">
+    A calm, calendar-first todo app for Linux.<br/>
+    Built with Flutter. Designed for focus.
+  </p>
+
+</div>
+
+</div>
 
 <p align="center">
   <a href="https://aur.archlinux.org/packages/nolio">
