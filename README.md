@@ -18,20 +18,20 @@
 
 <p align="center">
   <a href="https://aur.archlinux.org/packages/nolio">
-    <img src="https://img.shields.io/aur/version/nolio?label=AUR%20(nolio)&logo=archlinux&style=for-the-badge&color=FC528C"/>
+    <img src="https://img.shields.io/aur/version/nolio?label=AUR%20(nolio)&logo=archlinux&style=for-the-badge&labelColor=000000&color=FC528C"/>
   </a>
   <a href="https://aur.archlinux.org/packages/nolio-bin">
-    <img src="https://img.shields.io/aur/version/nolio-bin?label=AUR%20(nolio-bin)&logo=archlinux&style=for-the-badge&color=FC528C"/>
+    <img src="https://img.shields.io/aur/version/nolio-bin?label=AUR%20(nolio-bin)&logo=archlinux&style=for-the-badge&labelColor=000000&color=FC528C"/>
   </a>
   <a href="https://github.com/Grey-007/nolio/releases">
-    <img src="https://img.shields.io/github/v/release/Grey-007/nolio?include_prereleases&label=release&style=for-the-badge&color=FC528C"/>
+    <img src="https://img.shields.io/github/v/release/Grey-007/nolio?include_prereleases&label=release&style=for-the-badge&labelColor=000000&color=FC528C"/>
   </a>
   <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/Grey-007/nolio?style=for-the-badge&color=FC528C"/>
+    <img src="https://img.shields.io/github/license/Grey-007/nolio?style=for-the-badge&labelColor=000000&color=FC528C"/>
   </a>
-  <img src="https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter&style=for-the-badge&color=FC528C"/>
-  <img src="https://img.shields.io/badge/platform-Linux--only-blue?logo=linux&style=for-the-badge&color=FC528C"/>
-  <img src="https://img.shields.io/badge/display-Wayland%20%7C%20X11-success?style=for-the-badge&color=FC528C"/>
+  <img src="https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter&style=for-the-badge&labelColor=000000&color=FC528C"/>
+  <img src="https://img.shields.io/badge/platform-Linux--only-blue?logo=linux&style=for-the-badge&labelColor=000000&color=FC528C"/>
+  <img src="https://img.shields.io/badge/display-Wayland%20%7C%20X11-success?style=for-the-badge&labelColor=000000&color=FC528C"/>
 </p>
 
 ---
