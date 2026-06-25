@@ -151,7 +151,12 @@ Planned improvements:
 
 ---
 
-## 🤝 Contributing
+## CI/CD Pipeline
+
+Avelo uses GitHub Actions to automatically build and release Windows, Linux, and Android binaries.
+To learn how the automated releases work or how to trigger them, read the [CI/CD Documentation](docs/CI_CD.md).
+
+## Support / Contributing
 
 Contributions, bug reports, and UI feedback are welcome.
 
