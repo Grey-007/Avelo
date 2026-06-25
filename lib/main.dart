@@ -390,16 +390,8 @@ class _NavIconState extends State<_NavIcon>
         : Colors.white54;
 
     return MouseRegion(
-      onEnter: (_) {
-        if (!widget.selected) {
-          setState(() => hover = true);
-        }
-      },
-      onExit: (_) {
-        if (!widget.selected) {
-          setState(() => hover = false);
-        }
-      },
+      onEnter: (_) => setState(() => hover = true),
+      onExit: (_) => setState(() => hover = false),
       child: GestureDetector(
         onTap: widget.onTap,
         child: ScaleTransition(
