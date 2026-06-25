@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../../theme/nolio_theme.dart';
+import '../../theme/pebble_theme.dart';
 
 class SettingsPage extends StatelessWidget {
-  final NolioThemeId themeId;
-  final ValueChanged<NolioThemeId> onThemeChange;
+  final PebbleThemeId themeId;
+  final ValueChanged<PebbleThemeId> onThemeChange;
   final Color defaultAccent;
   final ValueChanged<Color> onAccentChange;
   const SettingsPage({
@@ -17,22 +17,32 @@ class SettingsPage extends StatelessWidget {
   });
 
   bool get _showAccentPicker =>
-      themeId == NolioThemeId.defaultTheme || themeId == NolioThemeId.amoled;
+      themeId == PebbleThemeId.defaultTheme ||
+      themeId == PebbleThemeId.amoled ||
+      themeId == PebbleThemeId.glassmorphic ||
+      themeId == PebbleThemeId.liquidGlass ||
+      themeId == PebbleThemeId.normal;
 
-  List<NolioThemeId> get _themes => const [
-        NolioThemeId.defaultTheme,
-        NolioThemeId.amoled,
-        NolioThemeId.gruvbox,
-        NolioThemeId.everforest,
-        NolioThemeId.nord,
-        NolioThemeId.tokyoNight,
-        NolioThemeId.catppuccin,
+  List<PebbleThemeId> get _themes => const [
+        PebbleThemeId.defaultTheme,
+        PebbleThemeId.amoled,
+        PebbleThemeId.glassmorphic,
+        PebbleThemeId.liquidGlass,
+        PebbleThemeId.normal,
+        PebbleThemeId.gruvbox,
+        PebbleThemeId.everforest,
+        PebbleThemeId.nord,
+        PebbleThemeId.tokyoNight,
+        PebbleThemeId.catppuccin,
       ];
 
-  String _themeDescription(NolioThemeId id) {
+  String _themeDescription(PebbleThemeId id) {
     return switch (id) {
-      NolioThemeId.defaultTheme => 'Seeded accent + pick your color',
-      NolioThemeId.amoled => 'Pure black + glass panels + pick your color',
+      PebbleThemeId.defaultTheme => 'Seeded accent + pick your color',
+      PebbleThemeId.amoled => 'Pure black + glass panels + pick your color',
+      PebbleThemeId.glassmorphic => 'Glass effect with strong borders + pick your color',
+      PebbleThemeId.liquidGlass => 'High blur liquid effect + pick your color',
+      PebbleThemeId.normal => 'Standard dark theme + pick your color',
       _ => 'Fixed palette',
     };
   }
@@ -59,14 +69,14 @@ class SettingsPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          DropdownMenu<NolioThemeId>(
+          DropdownMenu<PebbleThemeId>(
             initialSelection: themeId,
             onSelected: (v) {
               if (v != null) onThemeChange(v);
             },
             dropdownMenuEntries: _themes
                 .map(
-                  (t) => DropdownMenuEntry<NolioThemeId>(
+                  (t) => DropdownMenuEntry<PebbleThemeId>(
                     value: t,
                     label: t.label,
                   ),
@@ -131,7 +141,7 @@ class SettingsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Nolio',
+                  'Pebble',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -155,7 +165,7 @@ class SettingsPage extends StatelessWidget {
 
                 const SizedBox(height: 6),
                 const Text(
-                  'github.com/Grey-007/nolio',
+                  'github.com/Grey-007/pebble',
                   style: TextStyle(color: Colors.white70),
                 ),
 

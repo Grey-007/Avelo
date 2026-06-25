@@ -12,7 +12,7 @@ class TodoDB {
     databaseFactory = databaseFactoryFfi;
 
     final dir = await getApplicationSupportDirectory();
-    final path = '${dir.path}/nolio.db';
+    final path = '${dir.path}/pebble.db';
 
     db = await openDatabase(
       path,
@@ -208,5 +208,10 @@ class TodoDB {
       ''',
       [limit],
     );
+  }
+
+  Future<List<String>> getUniqueTags() async {
+    final rows = await db.rawQuery('SELECT DISTINCT tag FROM todos WHERE tag IS NOT NULL AND tag != ""');
+    return rows.map((r) => r['tag'] as String).toList();
   }
 }

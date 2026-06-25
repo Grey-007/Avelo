@@ -2,22 +2,22 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class NolioTheme extends ThemeExtension<NolioTheme> {
+class PebbleTheme extends ThemeExtension<PebbleTheme> {
   final bool glass;
   final double panelOpacity;
   final double borderOpacity;
   final double blurSigma;
 
-  const NolioTheme({
+  const PebbleTheme({
     required this.glass,
     required this.panelOpacity,
     required this.borderOpacity,
     required this.blurSigma,
   });
 
-  static NolioTheme of(BuildContext context) {
-    return Theme.of(context).extension<NolioTheme>() ??
-        const NolioTheme(
+  static PebbleTheme of(BuildContext context) {
+    return Theme.of(context).extension<PebbleTheme>() ??
+        const PebbleTheme(
           glass: false,
           panelOpacity: 0.06,
           borderOpacity: 0.0,
@@ -26,13 +26,13 @@ class NolioTheme extends ThemeExtension<NolioTheme> {
   }
 
   @override
-  NolioTheme copyWith({
+  PebbleTheme copyWith({
     bool? glass,
     double? panelOpacity,
     double? borderOpacity,
     double? blurSigma,
   }) {
-    return NolioTheme(
+    return PebbleTheme(
       glass: glass ?? this.glass,
       panelOpacity: panelOpacity ?? this.panelOpacity,
       borderOpacity: borderOpacity ?? this.borderOpacity,
@@ -41,9 +41,9 @@ class NolioTheme extends ThemeExtension<NolioTheme> {
   }
 
   @override
-  NolioTheme lerp(ThemeExtension<NolioTheme>? other, double t) {
-    if (other is! NolioTheme) return this;
-    return NolioTheme(
+  PebbleTheme lerp(ThemeExtension<PebbleTheme>? other, double t) {
+    if (other is! PebbleTheme) return this;
+    return PebbleTheme(
       glass: t < 0.5 ? glass : other.glass,
       panelOpacity: lerpDouble(panelOpacity, other.panelOpacity, t) ??
           panelOpacity,
@@ -54,12 +54,12 @@ class NolioTheme extends ThemeExtension<NolioTheme> {
   }
 }
 
-class NolioPanel extends StatelessWidget {
+class PebblePanel extends StatelessWidget {
   final Widget child;
   final BorderRadius borderRadius;
   final EdgeInsetsGeometry padding;
 
-  const NolioPanel({
+  const PebblePanel({
     super.key,
     required this.child,
     this.borderRadius = const BorderRadius.all(Radius.circular(24)),
@@ -68,7 +68,7 @@ class NolioPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ext = NolioTheme.of(context);
+    final ext = PebbleTheme.of(context);
 
     final panel = Container(
       padding: padding,
@@ -97,7 +97,7 @@ class NolioPanel extends StatelessWidget {
   }
 }
 
-enum NolioThemeId {
+enum PebbleThemeId {
   defaultTheme('default', 'Default'),
   amoled('amoled', 'Amoled (Glass)'),
   gruvbox('gruvbox', 'Gruvbox'),
@@ -105,31 +105,40 @@ enum NolioThemeId {
   nord('nord', 'Nord'),
   tokyoNight('tokyo_night', 'Tokyo Night'),
   catppuccin('catppuccin', 'Catppuccin'),
+  glassmorphic('glassmorphic', 'Glassmorphic'),
+  liquidGlass('liquid_glass', 'Liquid Glass'),
+  normal('normal', 'Normal'),
   ;
 
   final String id;
   final String label;
-  const NolioThemeId(this.id, this.label);
+  const PebbleThemeId(this.id, this.label);
 
-  static NolioThemeId fromId(String id) {
-    return NolioThemeId.values.firstWhere(
+  static PebbleThemeId fromId(String id) {
+    return PebbleThemeId.values.firstWhere(
       (v) => v.id == id,
-      orElse: () => NolioThemeId.defaultTheme,
+      orElse: () => PebbleThemeId.defaultTheme,
     );
   }
 }
 
-class NolioThemes {
+class PebbleThemes {
   static ThemeData build({
-    required NolioThemeId themeId,
+    required PebbleThemeId themeId,
     required Color defaultAccent,
   }) {
     switch (themeId) {
-      case NolioThemeId.defaultTheme:
+      case PebbleThemeId.defaultTheme:
         return _default(defaultAccent);
-      case NolioThemeId.amoled:
+      case PebbleThemeId.amoled:
         return _amoled(defaultAccent);
-      case NolioThemeId.gruvbox:
+      case PebbleThemeId.glassmorphic:
+        return _glassmorphic(defaultAccent);
+      case PebbleThemeId.liquidGlass:
+        return _liquidGlass(defaultAccent);
+      case PebbleThemeId.normal:
+        return _normal(defaultAccent);
+      case PebbleThemeId.gruvbox:
         return _fixed(
           seed: const Color(0xFFD79921),
           secondary: const Color(0xFFB8BB26),
@@ -137,7 +146,7 @@ class NolioThemes {
           surface: const Color(0xFF32302F),
           error: const Color(0xFFFB4934),
         );
-      case NolioThemeId.everforest:
+      case PebbleThemeId.everforest:
         return _fixed(
           seed: const Color(0xFFA7C080),
           secondary: const Color(0xFFDBBC7F),
@@ -145,7 +154,7 @@ class NolioThemes {
           surface: const Color(0xFF3A454A),
           error: const Color(0xFFE67E80),
         );
-      case NolioThemeId.nord:
+      case PebbleThemeId.nord:
         return _fixed(
           seed: const Color(0xFF88C0D0),
           secondary: const Color(0xFF81A1C1),
@@ -153,7 +162,7 @@ class NolioThemes {
           surface: const Color(0xFF3B4252),
           error: const Color(0xFFBF616A),
         );
-      case NolioThemeId.tokyoNight:
+      case PebbleThemeId.tokyoNight:
         return _fixed(
           seed: const Color(0xFF7AA2F7),
           secondary: const Color(0xFFBB9AF7),
@@ -161,7 +170,7 @@ class NolioThemes {
           surface: const Color(0xFF24283B),
           error: const Color(0xFFF7768E),
         );
-      case NolioThemeId.catppuccin:
+      case PebbleThemeId.catppuccin:
         return _fixed(
           seed: const Color(0xFF89B4FA),
           secondary: const Color(0xFFF5C2E7),
@@ -195,7 +204,7 @@ class NolioThemes {
       colorScheme: scheme,
       scaffoldBackgroundColor: background,
       extensions: const [
-        NolioTheme(
+        PebbleTheme(
           glass: false,
           panelOpacity: 0.06,
           borderOpacity: 0.0,
@@ -215,7 +224,7 @@ class NolioThemes {
       brightness: Brightness.dark,
       colorScheme: scheme,
       extensions: const [
-        NolioTheme(
+        PebbleTheme(
           glass: false,
           panelOpacity: 0.06,
           borderOpacity: 0.0,
@@ -248,11 +257,77 @@ class NolioThemes {
       dialogTheme: const DialogThemeData(backgroundColor: background),
       canvasColor: Colors.black,
       extensions: const [
-        NolioTheme(
+        PebbleTheme(
           glass: true,
           panelOpacity: 0.06,
           borderOpacity: 0.14,
           blurSigma: 26,
+        ),
+      ],
+    );
+  }
+
+  static ThemeData _glassmorphic(Color accent) {
+    const background = Color(0xFF1E1E1E);
+    final scheme = ColorScheme.fromSeed(
+      seedColor: accent,
+      brightness: Brightness.dark,
+    ).copyWith(secondary: accent);
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: background,
+      extensions: const [
+        PebbleTheme(
+          glass: true,
+          panelOpacity: 0.12,
+          borderOpacity: 0.25,
+          blurSigma: 18,
+        ),
+      ],
+    );
+  }
+
+  static ThemeData _liquidGlass(Color accent) {
+    const background = Color(0xFF0F172A);
+    final scheme = ColorScheme.fromSeed(
+      seedColor: accent,
+      brightness: Brightness.dark,
+    ).copyWith(secondary: accent);
+
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: background,
+      extensions: const [
+        PebbleTheme(
+          glass: true,
+          panelOpacity: 0.04,
+          borderOpacity: 0.45,
+          blurSigma: 38,
+        ),
+      ],
+    );
+  }
+
+  static ThemeData _normal(Color accent) {
+    final scheme = ColorScheme.fromSeed(
+      seedColor: accent,
+      brightness: Brightness.dark,
+    );
+    return ThemeData(
+      useMaterial3: true,
+      brightness: Brightness.dark,
+      colorScheme: scheme,
+      extensions: const [
+        PebbleTheme(
+          glass: false,
+          panelOpacity: 0.08,
+          borderOpacity: 0.05,
+          blurSigma: 0,
         ),
       ],
     );

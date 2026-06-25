@@ -88,6 +88,8 @@ class _CalendarPageState extends State<CalendarPage> {
     final tagCtrl = TextEditingController(text: _tagLabel(raw));
     Color selectedTagColor = raw.isEmpty ? Theme.of(context).colorScheme.primary : _tagColor(raw);
 
+    final uniqueTags = await TodoDB.instance.getUniqueTags();
+
     await showDialog<void>(
       context: context,
       builder: (ctx) {
@@ -222,6 +224,30 @@ class _CalendarPageState extends State<CalendarPage> {
                             colorDot(c),
                         ],
                       ),
+                      if (uniqueTags.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        Text('Recent Tags:', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                        const SizedBox(height: 8),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: uniqueTags.map((tagRaw) {
+                            final tName = _tagLabel(tagRaw);
+                            final tColor = _tagColor(tagRaw);
+                            return GestureDetector(
+                              onTap: () {
+                                tagCtrl.text = tName;
+                                setLocal(() => selectedTagColor = tColor);
+                              },
+                              child: Chip(
+                                backgroundColor: tColor.withValues(alpha: 0.1),
+                                side: BorderSide(color: tColor.withValues(alpha: 0.3)),
+                                label: Text(tName, style: TextStyle(color: tColor, fontSize: 12)),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -512,7 +538,7 @@ class _AnimatedAddButtonState extends State<_AnimatedAddButton>
     );
 
     _scaleAnimation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
     );
 
     _controller.forward();
@@ -524,16 +550,17 @@ class _AnimatedAddButtonState extends State<_AnimatedAddButton>
     super.dispose();
   }
 
-  void _handlePress() {
+  void _handlePress() async {
+    final tags = await TodoDB.instance.getUniqueTags();
     // Spring press animation - bounce effect
     _controller.reverse(from: 1.0).then((_) {
       _controller.forward();
       // Show add task dialog
-      _showAddTaskDialog();
+      _showAddTaskDialog(tags);
     });
   }
 
-  void _showAddTaskDialog() {
+  void _showAddTaskDialog(List<String> uniqueTags) {
     final TextEditingController taskCtrl = TextEditingController();
     final TextEditingController tagCtrl = TextEditingController();
     Color selectedTagColor = widget.accent;
@@ -723,6 +750,33 @@ class _AnimatedAddButtonState extends State<_AnimatedAddButton>
                           colorDot(c),
                       ],
                     ),
+
+                    if (uniqueTags.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      Text('Recent Tags:', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: uniqueTags.map((tagRaw) {
+                          if (!tagRaw.contains('|')) return const SizedBox.shrink();
+                          final parts = tagRaw.split('|');
+                          final tName = parts[0];
+                          final tColor = Color(int.tryParse(parts[1]) ?? Colors.grey.toARGB32());
+                          return GestureDetector(
+                            onTap: () {
+                              tagCtrl.text = tName;
+                              setLocal(() => selectedTagColor = tColor);
+                            },
+                            child: Chip(
+                              backgroundColor: tColor.withValues(alpha: 0.1),
+                              side: BorderSide(color: tColor.withValues(alpha: 0.3)),
+                              label: Text(tName, style: TextStyle(color: tColor, fontSize: 12)),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
 
                     const SizedBox(height: 12),
 

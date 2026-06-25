@@ -3,8 +3,8 @@
 <div style="display:inline-block; text-align:left; padding:20px 28px; border:1px solid #2a2a2a; border-radius:10px;">
 
   <div style="display:flex; align-items:center; gap:16px;">
-    <img src="screenshot/nolio.png" width="48" alt="Nolio Logo"/>
-    <h1 style="margin:0;">Nolio</h1>
+    <img src="screenshot/pebble.png" width="48" alt="Pebble Logo"/>
+    <h1 style="margin:0;">Pebble</h1>
   </div>
 
   <p style="margin:10px 0 0 64px; color:#cfcfcf;">
@@ -17,17 +17,17 @@
 </div>
 
 <p align="center">
-  <a href="https://aur.archlinux.org/packages/nolio">
-    <img src="https://img.shields.io/aur/version/nolio?label=AUR%20(nolio)&logo=archlinux&style=for-the-badge&labelColor=000000&color=FC528C"/>
+  <a href="https://aur.archlinux.org/packages/pebble">
+    <img src="https://img.shields.io/aur/version/pebble?label=AUR%20(pebble)&logo=archlinux&style=for-the-badge&labelColor=000000&color=FC528C"/>
   </a>
-  <a href="https://aur.archlinux.org/packages/nolio-bin">
-    <img src="https://img.shields.io/aur/version/nolio-bin?label=AUR%20(nolio-bin)&logo=archlinux&style=for-the-badge&labelColor=000000&color=FC528C"/>
+  <a href="https://aur.archlinux.org/packages/pebble-bin">
+    <img src="https://img.shields.io/aur/version/pebble-bin?label=AUR%20(pebble-bin)&logo=archlinux&style=for-the-badge&labelColor=000000&color=FC528C"/>
   </a>
-  <a href="https://github.com/Grey-007/nolio/releases">
-    <img src="https://img.shields.io/github/v/release/Grey-007/nolio?include_prereleases&label=release&style=for-the-badge&labelColor=000000&color=FC528C"/>
+  <a href="https://github.com/Grey-007/pebble/releases">
+    <img src="https://img.shields.io/github/v/release/Grey-007/pebble?include_prereleases&label=release&style=for-the-badge&labelColor=000000&color=FC528C"/>
   </a>
   <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/Grey-007/nolio?style=for-the-badge&labelColor=000000&color=FC528C"/>
+    <img src="https://img.shields.io/github/license/Grey-007/pebble?style=for-the-badge&labelColor=000000&color=FC528C"/>
   </a>
   <img src="https://img.shields.io/badge/Flutter-3.x-blue?logo=flutter&style=for-the-badge&labelColor=000000&color=FC528C"/>
   <img src="https://img.shields.io/badge/platform-Linux--only-blue?logo=linux&style=for-the-badge&labelColor=000000&color=FC528C"/>
@@ -40,7 +40,7 @@
 
 Most productivity apps overwhelm you with features.
 
-Nolio does the opposite.
+Pebble does the opposite.
 
 - Your **day** is the interface  
 - Tasks live directly inside the **calendar**
@@ -82,7 +82,7 @@ Just a clean, distraction-free planning surface built specifically for Linux des
 Fastest install. No Flutter required.
 
 ```bash
-yay -S nolio-bin
+yay -S pebble-bin
 ````
 
 ### 🔹 Build from Source
@@ -90,7 +90,7 @@ yay -S nolio-bin
 Build locally using Flutter.
 
 ```bash
-yay -S nolio
+yay -S pebble
 ```
 
 ---
@@ -100,7 +100,7 @@ yay -S nolio
 Launch from terminal:
 
 ```bash
-nolio
+pebble
 ```
 
 Or open it from your application launcher (Rofi, GNOME, KDE, etc.).
@@ -121,8 +121,8 @@ Or open it from your application launcher (Rofi, GNOME, KDE, etc.).
 Clone the repository:
 
 ```bash
-git clone https://github.com/Grey-007/nolio.git
-cd nolio
+git clone https://github.com/Grey-007/pebble.git
+cd pebble
 ```
 
 Run in development mode:

@@ -11,7 +11,7 @@ import 'features/calendar/calendar_page.dart';
 import 'features/timer/timer_page.dart';
 import 'features/timeline/timeline_page.dart';
 import 'features/settings/settings_page.dart';
-import 'theme/nolio_theme.dart';
+import 'theme/pebble_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,14 +22,14 @@ void main() async {
   final savedAccent = await TodoDB.instance.getSetting('accent');
 
   final themeId = savedTheme == null
-      ? NolioThemeId.defaultTheme
-      : NolioThemeId.fromId(savedTheme);
+      ? PebbleThemeId.defaultTheme
+      : PebbleThemeId.fromId(savedTheme);
 
   final accent = savedAccent == null
       ? const Color(0xFF1DB954)
       : Color(int.tryParse(savedAccent) ?? 0xFF1DB954);
 
-  runApp(NolioApp(initialThemeId: themeId, initialAccent: accent));
+  runApp(PebbleApp(initialThemeId: themeId, initialAccent: accent));
 }
 
 Future<void> _configureWindow() async {
@@ -44,22 +44,22 @@ Future<void> _configureWindow() async {
   });
 }
 
-class NolioApp extends StatefulWidget {
-  final NolioThemeId initialThemeId;
+class PebbleApp extends StatefulWidget {
+  final PebbleThemeId initialThemeId;
   final Color initialAccent;
-  const NolioApp({
+  const PebbleApp({
     super.key,
     required this.initialThemeId,
     required this.initialAccent,
   });
 
   @override
-  State<NolioApp> createState() => _NolioAppState();
+  State<PebbleApp> createState() => _PebbleAppState();
 }
 
-class _NolioAppState extends State<NolioApp> {
+class _PebbleAppState extends State<PebbleApp> {
   late Color accent;
-  late NolioThemeId themeId;
+  late PebbleThemeId themeId;
 
   @override
   void initState() {
@@ -72,7 +72,7 @@ class _NolioAppState extends State<NolioApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: NolioThemes.build(themeId: themeId, defaultAccent: accent),
+      theme: PebbleThemes.build(themeId: themeId, defaultAccent: accent),
       home: AppShell(
         themeId: themeId,
         onThemeChange: (t) {
@@ -90,8 +90,8 @@ class _NolioAppState extends State<NolioApp> {
 }
 
 class AppShell extends StatefulWidget {
-  final NolioThemeId themeId;
-  final ValueChanged<NolioThemeId> onThemeChange;
+  final PebbleThemeId themeId;
+  final ValueChanged<PebbleThemeId> onThemeChange;
   final Color defaultAccent;
   final ValueChanged<Color> onAccentChange;
   const AppShell({
@@ -129,7 +129,7 @@ class _AppShellState extends State<AppShell> {
       ),
     ];
 
-    final glass = NolioTheme.of(context).glass;
+    final glass = PebbleTheme.of(context).glass;
 
     return Scaffold(
       body: Stack(
@@ -144,17 +144,17 @@ class _AppShellState extends State<AppShell> {
               ),
               Expanded(
                 child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 400),
+                  duration: const Duration(milliseconds: 600),
                   switchInCurve: Curves.easeInOutCubic,
                   switchOutCurve: Curves.easeInOutCubic,
                   transitionBuilder: (child, animation) {
                     return FadeTransition(
-                      opacity: animation,
+                      opacity: CurvedAnimation(parent: animation, curve: Curves.easeInOut),
                       child: ScaleTransition(
-                        scale: Tween<double>(begin: 0.95, end: 1.0).animate(
+                        scale: Tween<double>(begin: 0.98, end: 1.0).animate(
                           CurvedAnimation(
                             parent: animation,
-                            curve: Curves.easeOutCubic,
+                            curve: Curves.easeInOutCubic,
                           ),
                         ),
                         child: child,
@@ -219,7 +219,7 @@ class _SideNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = Theme.of(context).colorScheme.primary;
-    final glass = NolioTheme.of(context).glass;
+    final glass = PebbleTheme.of(context).glass;
 
     final icons = [
       Icons.calendar_month, // Calendar
@@ -257,7 +257,7 @@ class _SideNav extends StatelessWidget {
     if (glass) {
       return Padding(
         padding: outerPadding,
-        child: NolioPanel(
+        child: PebblePanel(
           borderRadius: BorderRadius.circular(22),
           child: content,
         ),
@@ -302,11 +302,11 @@ class _NavIconState extends State<_NavIcon>
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 400),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOutQuad),
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.15).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOutCubic),
     );
   }
 
@@ -350,8 +350,8 @@ class _NavIconState extends State<_NavIcon>
         child: ScaleTransition(
           scale: _scaleAnimation,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 200),
-            curve: Curves.easeInOutQuad,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOutCubic,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
               color: widget.selected
@@ -380,10 +380,10 @@ class _ContentShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
           padding: const EdgeInsets.fromLTRB(12, 12, 18, 18),
-          child: NolioPanel(child: child),
+          child: PebblePanel(child: child),
         )
         .animate()
-        .fadeIn(duration: 400.ms, curve: Curves.easeInOutCubic)
-        .slideX(begin: 0.05, duration: 400.ms, curve: Curves.easeInOutCubic);
+        .fadeIn(duration: 600.ms, curve: Curves.easeInOutCubic)
+        .slideX(begin: 0.03, duration: 600.ms, curve: Curves.easeInOutCubic);
   }
 }
