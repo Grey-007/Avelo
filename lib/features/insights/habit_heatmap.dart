@@ -24,7 +24,7 @@ class HabitHeatmap extends StatelessWidget {
     final totalDaysToSubtract = (cols - 1) * 7 + (currentWeekday - 1);
     final startDate = todayNormalized.subtract(Duration(days: totalDaysToSubtract));
 
-    int maxCount = 1;
+    int maxCount = 4; // Ensures a smooth gradient even on low-activity days
     for (final count in data.values) {
       if (count > maxCount) maxCount = count;
     }
@@ -114,13 +114,13 @@ class HabitHeatmap extends StatelessWidget {
             const SizedBox(width: 8),
             _buildSquare(0, maxCount, accent),
             const SizedBox(width: 4),
-            _buildSquare((maxCount * 0.25).ceil(), maxCount, accent),
+            _buildSquare(0, maxCount, accent, isLegend: true, legendIntensity: 0.35),
             const SizedBox(width: 4),
-            _buildSquare((maxCount * 0.5).ceil(), maxCount, accent),
+            _buildSquare(0, maxCount, accent, isLegend: true, legendIntensity: 0.55),
             const SizedBox(width: 4),
-            _buildSquare((maxCount * 0.75).ceil(), maxCount, accent),
+            _buildSquare(0, maxCount, accent, isLegend: true, legendIntensity: 0.75),
             const SizedBox(width: 4),
-            _buildSquare(maxCount, maxCount, accent),
+            _buildSquare(0, maxCount, accent, isLegend: true, legendIntensity: 1.0),
             const SizedBox(width: 8),
             const Text('More', style: TextStyle(color: Colors.white54, fontSize: 12)),
           ],
@@ -141,9 +141,11 @@ class HabitHeatmap extends StatelessWidget {
     );
   }
 
-  Widget _buildSquare(int count, int maxCount, Color accent) {
+  Widget _buildSquare(int count, int maxCount, Color accent, {bool isLegend = false, double? legendIntensity}) {
     Color color;
-    if (count == 0) {
+    if (isLegend && legendIntensity != null) {
+      color = accent.withValues(alpha: legendIntensity);
+    } else if (count == 0) {
       color = Colors.white.withValues(alpha: 0.05);
     } else {
       final intensity = (count / maxCount).clamp(0.2, 1.0);
@@ -151,7 +153,7 @@ class HabitHeatmap extends StatelessWidget {
     }
 
     return Tooltip(
-      message: count > 0 ? '$count tasks completed' : 'No tasks',
+      message: isLegend ? '' : count > 0 ? '$count task${count == 1 ? '' : 's'} completed' : 'No tasks',
       child: Container(
         width: 16,
         height: 16,
@@ -159,7 +161,7 @@ class HabitHeatmap extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: count == 0 ? Colors.white.withValues(alpha: 0.05) : accent.withValues(alpha: 0.1),
+            color: (count == 0 && !isLegend) ? Colors.white.withValues(alpha: 0.05) : accent.withValues(alpha: 0.1),
             width: 1,
           )
         ),
