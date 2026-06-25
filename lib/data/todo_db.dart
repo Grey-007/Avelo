@@ -220,4 +220,18 @@ class TodoDB {
     final rows = await db.rawQuery('SELECT DISTINCT tag FROM todos WHERE tag IS NOT NULL AND tag != ""');
     return rows.map((r) => r['tag'] as String).toList();
   }
+
+  Future<List<Map<String, dynamic>>> getTimeSpentPerTag(int days) async {
+    final date = DateTime.now().subtract(Duration(days: days));
+    final dateStr = date.toIso8601String().split('T')[0];
+    
+    return await db.rawQuery('''
+      SELECT t.tag, SUM(l.seconds) as total_seconds
+      FROM timer_logs l
+      INNER JOIN todos t ON l.task_id = t.id
+      WHERE l.date >= ? AND l.type = 'work' AND t.tag IS NOT NULL AND t.tag != ''
+      GROUP BY t.tag
+      ORDER BY total_seconds DESC
+    ''', [dateStr]);
+  }
 }
