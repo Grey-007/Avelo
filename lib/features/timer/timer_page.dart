@@ -7,6 +7,8 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../data/todo_db.dart';
 
+final ValueNotifier<bool> focusModeNotifier = ValueNotifier(false);
+
 enum _TimerMode { work, breakTime }
 
 class _TimerEngine extends ChangeNotifier {
@@ -317,21 +319,45 @@ class _TimerPageState extends State<TimerPage> {
                 ),
               ),
             ),
+            Align(
+              alignment: Alignment.topRight,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: focusModeNotifier,
+                builder: (context, focus, _) {
+                  return IconButton(
+                    icon: Icon(focus ? Icons.fullscreen_exit : Icons.fullscreen),
+                    color: Colors.white70,
+                    tooltip: 'Focus Mode',
+                    onPressed: () => focusModeNotifier.value = !focus,
+                  );
+                },
+              ),
+            ),
             Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(
-                    _formatClock(_engine.remainingSeconds),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 116,
-                      fontWeight: FontWeight.w800,
-                      color: accent,
-                      letterSpacing: 0.8,
-                      height: 0.9,
-                    ),
-                  ).animate().fadeIn(duration: 240.ms).scale(),
+                  ValueListenableBuilder<bool>(
+                    valueListenable: focusModeNotifier,
+                    builder: (context, focus, _) {
+                      return Text(
+                        _formatClock(_engine.remainingSeconds),
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: focus ? 180 : 116,
+                          fontWeight: FontWeight.w800,
+                          color: accent,
+                          letterSpacing: 0.8,
+                          height: 0.9,
+                        ),
+                      ).animate(target: focus ? 1 : 0).scale(
+                        begin: const Offset(1, 1),
+                        end: const Offset(1.1, 1.1),
+                        duration: 600.ms,
+                        curve: Curves.easeInOutCubic,
+                      );
+                    },
+                  ),
                   const SizedBox(height: 10),
                   Text(
                     _modeLabel(_engine.mode),
@@ -540,21 +566,27 @@ class _TimerPageState extends State<TimerPage> {
     final workPct =
         liveTotalSeconds == 0 ? 0.0 : (liveWorkSeconds / liveTotalSeconds) * 100;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final heroHeight =
-            (constraints.maxHeight - 20).clamp(480.0, 1400.0);
+    return ValueListenableBuilder<bool>(
+      valueListenable: focusModeNotifier,
+      builder: (context, focusMode, _) {
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final heroHeight = focusMode
+                ? constraints.maxHeight
+                : (constraints.maxHeight - 20).clamp(480.0, 1400.0);
 
-        return Stack(
-          children: [
-            SingleChildScrollView(
-              controller: _scrollCtrl,
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 18),
-              child: Column(
-                children: [
-                  _timerHero(accent: accent, height: heroHeight),
-                  SizedBox(
-                    key: _statsKey,
+            return Stack(
+              children: [
+                SingleChildScrollView(
+                  controller: _scrollCtrl,
+                  physics: focusMode ? const NeverScrollableScrollPhysics() : null,
+                  padding: EdgeInsets.fromLTRB(24, 8, 24, focusMode ? 0 : 18),
+                  child: Column(
+                    children: [
+                      _timerHero(accent: accent, height: heroHeight),
+                      if (!focusMode)
+                        SizedBox(
+                          key: _statsKey,
                     child: IgnorePointer(
                       ignoring: _floatingStats,
                       child: AnimatedOpacity(
@@ -729,10 +761,10 @@ class _TimerPageState extends State<TimerPage> {
                       workPct: workPct,
                     ),
                   ),
-                ),
+                ],
               ),
-            ),
-          ],
+            );
+          },
         );
       },
     );

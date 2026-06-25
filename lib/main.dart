@@ -138,9 +138,25 @@ class _AppShellState extends State<AppShell> {
             _AmoledBackdrop(accent: Theme.of(context).colorScheme.primary),
           Row(
             children: [
-              _SideNav(
-                selectedIndex: index,
-                onSelect: (i) => setState(() => index = i),
+              ValueListenableBuilder<bool>(
+                valueListenable: focusModeNotifier,
+                builder: (context, focus, child) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 600),
+                    curve: Curves.easeInOutCubic,
+                    width: focus ? 0 : 72,
+                    child: OverflowBox(
+                      minWidth: 0,
+                      maxWidth: 72,
+                      alignment: Alignment.centerLeft,
+                      child: child,
+                    ),
+                  );
+                },
+                child: _SideNav(
+                  selectedIndex: index,
+                  onSelect: (i) => setState(() => index = i),
+                ),
               ),
               Expanded(
                 child: AnimatedSwitcher(
