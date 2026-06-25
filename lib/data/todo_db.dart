@@ -21,7 +21,7 @@ class TodoDB {
 
     db = await openDatabase(
       path,
-      version: 8,
+      version: 9,
       onCreate: (db, _) async {
         await db.execute('''
           CREATE TABLE todos (
@@ -32,7 +32,8 @@ class TodoDB {
             done INTEGER NOT NULL DEFAULT 0,
             position INTEGER NOT NULL DEFAULT 0,
             recurring TEXT DEFAULT 'none',
-            reminder_time TEXT
+            reminder_time TEXT,
+            status TEXT NOT NULL DEFAULT 'todo'
           )
         ''');
         await db.execute('''
@@ -105,6 +106,10 @@ class TodoDB {
         if (old < 8) {
           await db.execute('ALTER TABLE todos ADD COLUMN reminder_time TEXT');
         }
+        if (old < 9) {
+          await db.execute('ALTER TABLE todos ADD COLUMN status TEXT NOT NULL DEFAULT "todo"');
+          await db.execute('UPDATE todos SET status = "done" WHERE done = 1');
+        }
       },
     );
   }
@@ -136,6 +141,7 @@ class TodoDB {
       'tag': tag,
       'position': maxPos + 1,
       'done': 0,
+      'status': 'todo',
     });
   }
 
@@ -170,7 +176,7 @@ class TodoDB {
   Future<void> toggleDone(int id, bool done) async {
     await db.update(
       'todos',
-      {'done': done ? 1 : 0},
+      {'done': done ? 1 : 0, 'status': done ? 'done' : 'todo'},
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -203,6 +209,7 @@ class TodoDB {
               'text': todo['text'],
               'tag': todo['tag'],
               'done': 0,
+              'status': 'todo',
               'position': todo['position'],
               'recurring': recurring,
               'reminder_time': todo['reminder_time'],
@@ -217,6 +224,25 @@ class TodoDB {
         }
       }
     }
+  }
+
+  Future<void> updateTodoStatus(int id, String status) async {
+    await db.update(
+      'todos',
+      {'status': status, 'done': status == 'done' ? 1 : 0},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<List<Map<String, dynamic>>> getTodosForKanban() async {
+    return await db.rawQuery('''
+      SELECT todos.*, 
+        (SELECT COUNT(*) FROM subtasks WHERE todo_id = todos.id) as subtask_count,
+        (SELECT COUNT(*) FROM subtasks WHERE todo_id = todos.id AND done = 1) as subtask_done_count
+      FROM todos
+      ORDER BY date ASC, position ASC, id ASC
+    ''');
   }
 
   Future<void> setSetting(String key, String value) async {

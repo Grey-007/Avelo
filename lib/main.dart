@@ -10,6 +10,7 @@ import 'data/todo_db.dart';
 import 'features/calendar/calendar_page.dart';
 import 'features/timer/timer_page.dart';
 import 'features/timeline/timeline_page.dart';
+import 'features/kanban/kanban_page.dart';
 import 'features/insights/insights_page.dart';
 import 'features/settings/settings_page.dart';
 import 'services/notification_service.dart';
@@ -153,6 +154,7 @@ class _AppShellState extends State<AppShell> {
       ),
       const _ContentShell(child: TimerPage()),
       const _ContentShell(child: TimelinePage()),
+      const _ContentShell(child: KanbanPage()),
       const _ContentShell(child: InsightsPage()),
       _ContentShell(
         child: SettingsPage(
@@ -276,6 +278,7 @@ class _SideNav extends StatelessWidget {
       Icons.calendar_month, // Calendar
       Icons.timer, // Timer
       Icons.view_agenda, // Timeline
+      Icons.view_kanban_outlined, // Kanban
       Icons.bar_chart, // Insights
       Icons.settings, // Settings
     ];
