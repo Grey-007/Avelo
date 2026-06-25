@@ -684,6 +684,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                       .animate()
                                       .scale(curve: Curves.easeInOutCubic),
                                 ),
+                                const SizedBox(width: 28), // Spacing for default Reorderable drag handle
                               ],
                             ),
                           ),

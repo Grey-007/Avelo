@@ -255,9 +255,8 @@ class _KanbanCard extends StatelessWidget {
       ),
     );
 
-    return LongPressDraggable<int>(
+    return Draggable<int>(
       data: todo['id'] as int,
-      delay: const Duration(milliseconds: 150),
       feedback: Material(
         color: Colors.transparent,
         child: SizedBox(
