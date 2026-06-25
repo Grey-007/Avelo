@@ -16,7 +16,7 @@ class TodoDB {
 
     db = await openDatabase(
       path,
-      version: 5,
+      version: 6,
       onCreate: (db, _) async {
         await db.execute('''
           CREATE TABLE todos (
@@ -36,6 +36,15 @@ class TodoDB {
             seconds INTEGER NOT NULL,
             task_id INTEGER,
             created_at TEXT NOT NULL
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE IF NOT EXISTS subtasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            todo_id INTEGER NOT NULL,
+            text TEXT NOT NULL,
+            done INTEGER NOT NULL DEFAULT 0,
+            position INTEGER NOT NULL DEFAULT 0
           )
         ''');
         await db.execute('''
@@ -72,17 +81,30 @@ class TodoDB {
         if (old < 5) {
           await db.execute('ALTER TABLE timer_logs ADD COLUMN task_id INTEGER');
         }
+        if (old < 6) {
+          await db.execute('''
+            CREATE TABLE IF NOT EXISTS subtasks (
+              id INTEGER PRIMARY KEY AUTOINCREMENT,
+              todo_id INTEGER NOT NULL,
+              text TEXT NOT NULL,
+              done INTEGER NOT NULL DEFAULT 0,
+              position INTEGER NOT NULL DEFAULT 0
+            )
+          ''');
+        }
       },
     );
   }
 
   Future<List<Map<String, dynamic>>> getTodos(String date) async {
-    return db.query(
-      'todos',
-      where: 'date = ?',
-      whereArgs: [date],
-      orderBy: 'position ASC',
-    );
+    return await db.rawQuery('''
+      SELECT todos.*, 
+        (SELECT COUNT(*) FROM subtasks WHERE todo_id = todos.id) as subtask_count,
+        (SELECT COUNT(*) FROM subtasks WHERE todo_id = todos.id AND done = 1) as subtask_done_count
+      FROM todos
+      WHERE date = ?
+      ORDER BY position ASC, id ASC
+    ''', [date]);
   }
 
   Future<void> addTodo(String date, String text, String tag) async {
@@ -233,5 +255,28 @@ class TodoDB {
       GROUP BY t.tag
       ORDER BY total_seconds DESC
     ''', [dateStr]);
+  }
+
+  // --- Subtasks ---
+
+  Future<List<Map<String, dynamic>>> getSubtasks(int todoId) async {
+    return await db.query('subtasks', where: 'todo_id = ?', whereArgs: [todoId], orderBy: 'position ASC, id ASC');
+  }
+
+  Future<void> addSubtask(int todoId, String text) async {
+    final count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM subtasks WHERE todo_id = ?', [todoId])) ?? 0;
+    await db.insert('subtasks', {'todo_id': todoId, 'text': text, 'done': 0, 'position': count});
+  }
+
+  Future<void> updateSubtaskText(int id, String text) async {
+    await db.update('subtasks', {'text': text}, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> toggleSubtaskDone(int id, bool done) async {
+    await db.update('subtasks', {'done': done ? 1 : 0}, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<void> deleteSubtask(int id) async {
+    await db.delete('subtasks', where: 'id = ?', whereArgs: [id]);
   }
 }

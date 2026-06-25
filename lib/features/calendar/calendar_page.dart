@@ -89,12 +89,19 @@ class _CalendarPageState extends State<CalendarPage> {
     Color selectedTagColor = raw.isEmpty ? Theme.of(context).colorScheme.primary : _tagColor(raw);
 
     final uniqueTags = await TodoDB.instance.getUniqueTags();
+    List<Map<String, dynamic>> subtasks = await TodoDB.instance.getSubtasks(todo['id'] as int);
+    final subtaskCtrl = TextEditingController();
 
     await showDialog<void>(
       context: context,
       builder: (ctx) {
         return StatefulBuilder(
           builder: (ctx, setLocal) {
+            Future<void> reloadSubtasks(Function setLocal) async {
+              final updated = await TodoDB.instance.getSubtasks(todo['id'] as int);
+              setLocal(() => subtasks = updated);
+            }
+
             Widget colorDot(Color c) {
               final selected = selectedTagColor.toARGB32() == c.toARGB32();
               return GestureDetector(
@@ -248,6 +255,84 @@ class _CalendarPageState extends State<CalendarPage> {
                           }).toList(),
                         ),
                       ],
+                      
+                      const SizedBox(height: 16),
+                      const Text('Subtasks', style: TextStyle(color: Colors.white54, fontSize: 12)),
+                      const SizedBox(height: 8),
+                      if (subtasks.isNotEmpty) ...[
+                        ...subtasks.map((st) {
+                          final stDone = (st['done'] as int) == 1;
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 6),
+                            child: Row(
+                              children: [
+                                GestureDetector(
+                                  onTap: () async {
+                                    await TodoDB.instance.toggleSubtaskDone(st['id'] as int, !stDone);
+                                    await reloadSubtasks(setLocal);
+                                  },
+                                  child: Icon(stDone ? Icons.check_circle : Icons.circle_outlined, size: 18, color: stDone ? selectedTagColor : Colors.white54),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Text(
+                                    st['text'],
+                                    style: TextStyle(
+                                      color: stDone ? Colors.white54 : Colors.white,
+                                      decoration: stDone ? TextDecoration.lineThrough : null,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                ),
+                                GestureDetector(
+                                  onTap: () async {
+                                    await TodoDB.instance.deleteSubtask(st['id'] as int);
+                                    await reloadSubtasks(setLocal);
+                                  },
+                                  child: const Icon(Icons.close, size: 16, color: Colors.white24),
+                                ),
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                        const SizedBox(height: 8),
+                      ],
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: subtaskCtrl,
+                              style: const TextStyle(color: Colors.white, fontSize: 13),
+                              decoration: InputDecoration(
+                                hintText: 'Add subtask...',
+                                hintStyle: const TextStyle(color: Colors.white38),
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                filled: true,
+                                fillColor: Colors.white.withValues(alpha: 0.04),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8), borderSide: BorderSide.none),
+                              ),
+                              onSubmitted: (val) async {
+                                if (val.trim().isEmpty) return;
+                                await TodoDB.instance.addSubtask(todo['id'] as int, val.trim());
+                                subtaskCtrl.clear();
+                                await reloadSubtasks(setLocal);
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.add, color: Colors.white54),
+                            onPressed: () async {
+                                final val = subtaskCtrl.text.trim();
+                                if (val.isEmpty) return;
+                                await TodoDB.instance.addSubtask(todo['id'] as int, val);
+                                subtaskCtrl.clear();
+                                await reloadSubtasks(setLocal);
+                            },
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 16),
                       Row(
                         children: [
@@ -327,6 +412,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
     textCtrl.dispose();
     tagCtrl.dispose();
+    subtaskCtrl.dispose();
     await loadTodos();
     await loadTasksForMonth(focusedMonth);
   }
@@ -467,14 +553,35 @@ class _CalendarPageState extends State<CalendarPage> {
                               const SizedBox(width: 10),
                               // Task text
                               Expanded(
-                                child: Text(
-                                  t['text'],
-                                  style: TextStyle(
-                                    color: isDone ? Colors.white54 : Colors.white,
-                                    decoration: isDone ? TextDecoration.lineThrough : null,
-                                    decorationColor:
-                                        isDone ? Colors.white54 : null,
-                                  ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      t['text'],
+                                      style: TextStyle(
+                                        color: isDone ? Colors.white54 : Colors.white,
+                                        decoration: isDone ? TextDecoration.lineThrough : null,
+                                        decorationColor: isDone ? Colors.white54 : null,
+                                      ),
+                                    ),
+                                    if ((t['subtask_count'] as int? ?? 0) > 0) ...[
+                                      const SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Icon(Icons.subdirectory_arrow_right, size: 12, color: isDone ? Colors.white24 : Colors.white54),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            '${t['subtask_done_count']} / ${t['subtask_count']} completed',
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: isDone ? Colors.white38 : Colors.white54,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ],
                                 ),
                               ),
                               // Tag if exists
