@@ -16,7 +16,7 @@ class TodoDB {
 
     db = await openDatabase(
       path,
-      version: 7,
+      version: 8,
       onCreate: (db, _) async {
         await db.execute('''
           CREATE TABLE todos (
@@ -26,7 +26,8 @@ class TodoDB {
             tag TEXT,
             done INTEGER NOT NULL DEFAULT 0,
             position INTEGER NOT NULL DEFAULT 0,
-            recurring TEXT DEFAULT 'none'
+            recurring TEXT DEFAULT 'none',
+            reminder_time TEXT
           )
         ''');
         await db.execute('''
@@ -96,6 +97,9 @@ class TodoDB {
         if (old < 7) {
           await db.execute('ALTER TABLE todos ADD COLUMN recurring TEXT DEFAULT "none"');
         }
+        if (old < 8) {
+          await db.execute('ALTER TABLE todos ADD COLUMN reminder_time TEXT');
+        }
       },
     );
   }
@@ -144,10 +148,11 @@ class TodoDB {
     required String text,
     required String tag,
     String recurring = 'none',
+    String? reminderTime,
   }) async {
     await db.update(
       'todos',
-      {'text': text, 'tag': tag, 'recurring': recurring},
+      {'text': text, 'tag': tag, 'recurring': recurring, 'reminder_time': reminderTime},
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -195,6 +200,7 @@ class TodoDB {
               'done': 0,
               'position': todo['position'],
               'recurring': recurring,
+              'reminder_time': todo['reminder_time'],
             });
 
             // copy subtasks

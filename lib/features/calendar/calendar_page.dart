@@ -92,6 +92,10 @@ class _CalendarPageState extends State<CalendarPage> {
     List<Map<String, dynamic>> subtasks = await TodoDB.instance.getSubtasks(todo['id'] as int);
     final subtaskCtrl = TextEditingController();
     String selectedRecurring = todo['recurring']?.toString() ?? 'none';
+    final rTimeStr = todo['reminder_time'] as String?;
+    TimeOfDay? selectedReminder = rTimeStr != null && rTimeStr.isNotEmpty
+        ? TimeOfDay(hour: int.parse(rTimeStr.split(':')[0]), minute: int.parse(rTimeStr.split(':')[1]))
+        : null;
 
     await showDialog<void>(
       context: context,
@@ -241,6 +245,43 @@ class _CalendarPageState extends State<CalendarPage> {
                                   DropdownMenuItem(value: 'daily', child: Text('Daily')),
                                   DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
                                   DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.04),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: GestureDetector(
+                              onTap: () async {
+                                final time = await showTimePicker(
+                                  context: context,
+                                  initialTime: selectedReminder ?? TimeOfDay.now(),
+                                );
+                                if (time != null) {
+                                  setLocal(() => selectedReminder = time);
+                                }
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.notifications, color: selectedReminder != null ? Theme.of(ctx).colorScheme.primary : Colors.white54, size: 16),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    selectedReminder != null ? '${selectedReminder!.hour.toString().padLeft(2, '0')}:${selectedReminder!.minute.toString().padLeft(2, '0')}' : 'Reminder',
+                                    style: TextStyle(color: selectedReminder != null ? Theme.of(ctx).colorScheme.primary : Colors.white54, fontSize: 13),
+                                  ),
+                                  if (selectedReminder != null) ...[
+                                    const SizedBox(width: 4),
+                                    GestureDetector(
+                                      onTap: () => setLocal(() => selectedReminder = null),
+                                      child: const Icon(Icons.close, size: 14, color: Colors.white54),
+                                    ),
+                                  ]
                                 ],
                               ),
                             ),
@@ -408,6 +449,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                   text: text,
                                   tag: tagString,
                                   recurring: selectedRecurring,
+                                  reminderTime: selectedReminder != null ? '${selectedReminder!.hour.toString().padLeft(2, '0')}:${selectedReminder!.minute.toString().padLeft(2, '0')}' : null,
                                 );
                                 if (!ctx.mounted) return;
                                 Navigator.pop(ctx);

@@ -12,6 +12,7 @@ import 'features/timer/timer_page.dart';
 import 'features/timeline/timeline_page.dart';
 import 'features/insights/insights_page.dart';
 import 'features/settings/settings_page.dart';
+import 'services/notification_service.dart';
 import 'theme/pebble_theme.dart';
 
 void main() async {
@@ -61,12 +62,44 @@ class PebbleApp extends StatefulWidget {
 class _PebbleAppState extends State<PebbleApp> {
   late Color accent;
   late PebbleThemeId themeId;
+  Timer? _reminderTimer;
+  final Set<int> _notifiedTodoIds = {};
 
   @override
   void initState() {
     super.initState();
     accent = widget.initialAccent;
     themeId = widget.initialThemeId;
+    _startReminderService();
+  }
+
+  void _startReminderService() {
+    _reminderTimer = Timer.periodic(const Duration(seconds: 30), (timer) async {
+      final now = DateTime.now();
+      final dateStr = now.toIso8601String().split('T')[0];
+      final timeStr = '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
+      
+      final todos = await TodoDB.instance.getTodos(dateStr);
+      for (final todo in todos) {
+        final rTime = todo['reminder_time'] as String?;
+        final isDone = (todo['done'] as int) == 1;
+        final id = todo['id'] as int;
+        
+        if (!isDone && rTime == timeStr && !_notifiedTodoIds.contains(id)) {
+          _notifiedTodoIds.add(id);
+          await NotificationService.show(
+            'Reminder: ${todo['text']}',
+            'It is time for your scheduled task!',
+          );
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _reminderTimer?.cancel();
+    super.dispose();
   }
 
   @override

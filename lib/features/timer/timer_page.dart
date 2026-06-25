@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
 import '../../data/todo_db.dart';
+import '../../services/notification_service.dart';
 
 final ValueNotifier<bool> focusModeNotifier = ValueNotifier(false);
 
@@ -47,12 +48,15 @@ class _TimerEngine extends ChangeNotifier {
     _ticker?.cancel();
     _ticker = Timer.periodic(const Duration(seconds: 1), (_) async {
       if (_transitioning || !running) return;
-      if (remainingSeconds > 0) {
+      if (remainingSeconds == 0) {
+        NotificationService.show(
+          'Timer Finished', 
+          'Your ${mode == _TimerMode.work ? "Focus" : "Break"} session has completed.'
+        );
+        await _handleSessionFinished();
+      } else {
         remainingSeconds -= 1;
         notifyListeners();
-      }
-      if (remainingSeconds == 0) {
-        await _handleSessionFinished();
       }
     });
   }
