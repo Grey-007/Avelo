@@ -91,6 +91,7 @@ class _CalendarPageState extends State<CalendarPage> {
     final uniqueTags = await TodoDB.instance.getUniqueTags();
     List<Map<String, dynamic>> subtasks = await TodoDB.instance.getSubtasks(todo['id'] as int);
     final subtaskCtrl = TextEditingController();
+    String selectedRecurring = todo['recurring']?.toString() ?? 'none';
 
     await showDialog<void>(
       context: context,
@@ -197,23 +198,54 @@ class _CalendarPageState extends State<CalendarPage> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      TextField(
-                        controller: tagCtrl,
-                        style: const TextStyle(color: Colors.white),
-                        decoration: InputDecoration(
-                          hintText: 'Tag (optional)',
-                          hintStyle: TextStyle(color: Colors.white38),
-                          filled: true,
-                          fillColor: Colors.white.withValues(alpha: 0.04),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: BorderSide.none,
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              controller: tagCtrl,
+                              style: const TextStyle(color: Colors.white),
+                              decoration: InputDecoration(
+                                hintText: 'Tag (optional)',
+                                hintStyle: const TextStyle(color: Colors.white38),
+                                filled: true,
+                                fillColor: Colors.white.withValues(alpha: 0.04),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide.none,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              ),
+                            ),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 10,
+                          const SizedBox(width: 12),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.04),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: selectedRecurring,
+                                dropdownColor: Colors.grey[900],
+                                icon: const Padding(
+                                  padding: EdgeInsets.only(left: 8),
+                                  child: Icon(Icons.repeat, color: Colors.white54, size: 16),
+                                ),
+                                style: const TextStyle(color: Colors.white, fontSize: 13),
+                                onChanged: (val) {
+                                  if (val != null) setLocal(() => selectedRecurring = val);
+                                },
+                                items: const [
+                                  DropdownMenuItem(value: 'none', child: Text('Once')),
+                                  DropdownMenuItem(value: 'daily', child: Text('Daily')),
+                                  DropdownMenuItem(value: 'weekly', child: Text('Weekly')),
+                                  DropdownMenuItem(value: 'monthly', child: Text('Monthly')),
+                                ],
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                       const SizedBox(height: 12),
                       Wrap(
@@ -375,6 +407,7 @@ class _CalendarPageState extends State<CalendarPage> {
                                   id: todo['id'] as int,
                                   text: text,
                                   tag: tagString,
+                                  recurring: selectedRecurring,
                                 );
                                 if (!ctx.mounted) return;
                                 Navigator.pop(ctx);

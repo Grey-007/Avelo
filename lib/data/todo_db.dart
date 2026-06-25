@@ -16,7 +16,7 @@ class TodoDB {
 
     db = await openDatabase(
       path,
-      version: 6,
+      version: 7,
       onCreate: (db, _) async {
         await db.execute('''
           CREATE TABLE todos (
@@ -24,8 +24,9 @@ class TodoDB {
             date TEXT NOT NULL,
             text TEXT NOT NULL,
             tag TEXT,
-            position INTEGER,
-            done INTEGER NOT NULL DEFAULT 0
+            done INTEGER NOT NULL DEFAULT 0,
+            position INTEGER NOT NULL DEFAULT 0,
+            recurring TEXT DEFAULT 'none'
           )
         ''');
         await db.execute('''
@@ -92,6 +93,9 @@ class TodoDB {
             )
           ''');
         }
+        if (old < 7) {
+          await db.execute('ALTER TABLE todos ADD COLUMN recurring TEXT DEFAULT "none"');
+        }
       },
     );
   }
@@ -135,10 +139,15 @@ class TodoDB {
     );
   }
 
-  Future<void> toggleDone(int id, bool done) async {
+  Future<void> updateTodo({
+    required int id,
+    required String text,
+    required String tag,
+    String recurring = 'none',
+  }) async {
     await db.update(
       'todos',
-      {'done': done ? 1 : 0},
+      {'text': text, 'tag': tag, 'recurring': recurring},
       where: 'id = ?',
       whereArgs: [id],
     );
@@ -148,17 +157,55 @@ class TodoDB {
     await db.delete('todos', where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<void> updateTodo({
-    required int id,
-    required String text,
-    required String tag,
-  }) async {
+  Future<void> toggleDone(int id, bool done) async {
     await db.update(
       'todos',
-      {'text': text, 'tag': tag},
+      {'done': done ? 1 : 0},
       where: 'id = ?',
       whereArgs: [id],
     );
+
+    if (done) {
+      final rows = await db.query('todos', where: 'id = ?', whereArgs: [id]);
+      if (rows.isNotEmpty) {
+        final todo = rows.first;
+        final recurring = todo['recurring'] as String? ?? 'none';
+        if (recurring != 'none') {
+          final currentDateStr = todo['date'] as String;
+          final currentDate = DateTime.parse(currentDateStr);
+          DateTime nextDate;
+          if (recurring == 'daily') {
+            nextDate = currentDate.add(const Duration(days: 1));
+          } else if (recurring == 'weekly') {
+            nextDate = currentDate.add(const Duration(days: 7));
+          } else if (recurring == 'monthly') {
+            nextDate = DateTime(currentDate.year, currentDate.month + 1, currentDate.day);
+          } else {
+            return;
+          }
+          final nextDateStr = nextDate.toIso8601String().split('T')[0];
+
+          // Check if already exists to prevent infinite duplicates
+          final existing = await db.query('todos', where: 'date = ? AND text = ?', whereArgs: [nextDateStr, todo['text']]);
+          if (existing.isEmpty) {
+            final newId = await db.insert('todos', {
+              'date': nextDateStr,
+              'text': todo['text'],
+              'tag': todo['tag'],
+              'done': 0,
+              'position': todo['position'],
+              'recurring': recurring,
+            });
+
+            // copy subtasks
+            final subtasks = await getSubtasks(id);
+            for (final st in subtasks) {
+              await addSubtask(newId, st['text'] as String);
+            }
+          }
+        }
+      }
+    }
   }
 
   Future<void> setSetting(String key, String value) async {
@@ -264,7 +311,8 @@ class TodoDB {
   }
 
   Future<void> addSubtask(int todoId, String text) async {
-    final count = Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM subtasks WHERE todo_id = ?', [todoId])) ?? 0;
+    final rows = await db.rawQuery('SELECT COUNT(*) FROM subtasks WHERE todo_id = ?', [todoId]);
+    final count = rows.isNotEmpty ? (rows.first.values.first as num).toInt() : 0;
     await db.insert('subtasks', {'todo_id': todoId, 'text': text, 'done': 0, 'position': count});
   }
 

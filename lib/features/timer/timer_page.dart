@@ -760,14 +760,16 @@ class _TimerPageState extends State<TimerPage> {
                       breakSeconds: liveBreakSeconds,
                       workPct: workPct,
                     ),
+                    ),
                   ),
-                ],
+                ),
               ),
-            );
-          },
-        );
-      },
-    );
+            ],
+          );
+        },
+      );
+    },
+  );
   }
 }
 
