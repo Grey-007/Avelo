@@ -86,7 +86,10 @@ class HabitHeatmap extends StatelessWidget {
                                 final currentDate = startDate.add(Duration(days: dayOffset));
                                 
                                 if (currentDate.isAfter(todayNormalized)) {
-                                  return const SizedBox(width: 16, height: 16, child: SizedBox());
+                                  return const Padding(
+                                    padding: EdgeInsets.only(bottom: 4.0),
+                                    child: SizedBox(width: 16, height: 16),
+                                  );
                                 }
 
                                 final count = data[currentDate] ?? 0;
