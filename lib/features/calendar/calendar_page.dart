@@ -387,8 +387,38 @@ class _CalendarPageState extends State<CalendarPage> {
                 const SizedBox(height: 12),
 
                 Expanded(
-                  child: ListView.builder(
+                  child: ReorderableListView.builder(
                     itemCount: todos.length,
+                    proxyDecorator: (child, index, animation) {
+                      return AnimatedBuilder(
+                        animation: animation,
+                        builder: (BuildContext context, Widget? child) {
+                          final double animValue = Curves.easeInOut.transform(animation.value);
+                          final double scale = lerpDouble(1, 1.02, animValue)!;
+                          return Transform.scale(
+                            scale: scale,
+                            child: Card(
+                              elevation: 8 * animValue,
+                              color: Colors.transparent,
+                              margin: EdgeInsets.zero,
+                              child: child,
+                            ),
+                          );
+                        },
+                        child: child,
+                      );
+                    },
+                    onReorder: (oldIndex, newIndex) async {
+                      if (oldIndex < newIndex) newIndex -= 1;
+                      setState(() {
+                        final item = todos.removeAt(oldIndex);
+                        todos.insert(newIndex, item);
+                      });
+                      
+                      for (int i = 0; i < todos.length; i++) {
+                        await TodoDB.instance.reorder(todos[i]['id'] as int, i);
+                      }
+                    },
                     itemBuilder: (context, i) {
                       final t = todos[i];
                       final raw = t['tag']?.toString() ?? '';
@@ -398,6 +428,7 @@ class _CalendarPageState extends State<CalendarPage> {
                       final isDone = (t['done'] as int) == 1;
 
                       return GestureDetector(
+                        key: ValueKey(t['id']),
                         onTap: () => _showEditTaskDialog(t),
                         child: Container(
                           margin: const EdgeInsets.symmetric(vertical: 6),
