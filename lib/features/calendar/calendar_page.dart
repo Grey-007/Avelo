@@ -524,21 +524,63 @@ class _CalendarPageState extends State<CalendarPage> {
                           isSameDay(d, widget.selectedDate),
                       onDaySelected: (d, _) =>
                       widget.onDateSelected(d),
-                  headerStyle: const HeaderStyle(
-                    titleCentered: false,
-                    formatButtonVisible: false,
-                  ),
-                  calendarStyle: CalendarStyle(
-                    selectedDecoration: BoxDecoration(
-                      color: accent,
-                      shape: BoxShape.circle,
-                    ),
-                    todayDecoration: BoxDecoration(
-                      color: accent.withValues(alpha: 0.3),
-                      shape: BoxShape.circle,
-                    ),
-                  ),
-                )
+                      headerStyle: const HeaderStyle(
+                        titleCentered: true,
+                        formatButtonVisible: false,
+                        titleTextStyle: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                        leftChevronIcon: Icon(Icons.chevron_left, color: Colors.white54),
+                        rightChevronIcon: Icon(Icons.chevron_right, color: Colors.white54),
+                      ),
+                      daysOfWeekStyle: const DaysOfWeekStyle(
+                        weekdayStyle: TextStyle(color: Colors.white54, fontWeight: FontWeight.w600, fontSize: 13),
+                        weekendStyle: TextStyle(color: Colors.white38, fontWeight: FontWeight.w600, fontSize: 13),
+                      ),
+                      calendarStyle: CalendarStyle(
+                        defaultTextStyle: const TextStyle(color: Colors.white, fontWeight: FontWeight.w500),
+                        weekendTextStyle: const TextStyle(color: Colors.white70),
+                        outsideTextStyle: const TextStyle(color: Colors.white24),
+                        selectedDecoration: BoxDecoration(
+                          color: accent,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: accent.withValues(alpha: 0.4),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        todayDecoration: BoxDecoration(
+                          color: accent.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                          border: Border.all(color: accent.withValues(alpha: 0.5), width: 1.5),
+                        ),
+                        cellMargin: const EdgeInsets.all(6),
+                      ),
+                      calendarBuilders: CalendarBuilders(
+                        markerBuilder: (context, date, events) {
+                          final key = _dateKeyFor(date);
+                          if (daysWithTasks.contains(key)) {
+                            return Positioned(
+                              bottom: 4,
+                              child: Container(
+                                width: 5,
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  color: isSameDay(date, widget.selectedDate) ? Colors.white : accent,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            );
+                          }
+                          return const SizedBox();
+                        },
+                      ),
+                    )
                     .animate()
                     .fadeIn(duration: 400.ms, curve: Curves.easeInOutCubic)
                     .slideY(begin: -0.1, duration: 400.ms, curve: Curves.easeOutCubic),

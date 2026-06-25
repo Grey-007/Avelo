@@ -338,40 +338,98 @@ class _TimerPageState extends State<TimerPage> {
               ),
             ),
             Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ValueListenableBuilder<bool>(
-                    valueListenable: focusModeNotifier,
-                    builder: (context, focus, _) {
-                      return Text(
-                        _formatClock(_engine.remainingSeconds),
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: focus ? 180 : 116,
-                          fontWeight: FontWeight.w800,
-                          color: accent,
-                          letterSpacing: 0.8,
-                          height: 0.9,
+              child: ValueListenableBuilder<bool>(
+                valueListenable: focusModeNotifier,
+                builder: (context, focus, _) {
+                  final progress = _engine.currentSessionTotalSeconds > 0
+                      ? _engine.currentSessionElapsedSeconds /
+                          _engine.currentSessionTotalSeconds
+                      : 0.0;
+                  final size = focus ? 380.0 : 280.0;
+
+                  return SizedBox(
+                    width: size,
+                    height: size,
+                    child: Stack(
+                      fit: StackFit.expand,
+                      children: [
+                        // The glowing ring
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: accent.withValues(alpha: 0.15),
+                                blurRadius: 40,
+                                spreadRadius: 10,
+                              ),
+                            ],
+                          ),
                         ),
-                      ).animate(target: focus ? 1 : 0).scale(
-                        begin: const Offset(1, 1),
-                        end: const Offset(1.1, 1.1),
-                        duration: 600.ms,
-                        curve: Curves.easeInOutCubic,
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    _modeLabel(_engine.mode),
-                    style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.68),
-                      letterSpacing: 0.45,
-                      fontWeight: FontWeight.w500,
+                        TweenAnimationBuilder<double>(
+                          tween: Tween<double>(begin: 0, end: progress),
+                          duration: const Duration(seconds: 1),
+                          builder: (context, val, _) {
+                            return CircularProgressIndicator(
+                              value: val,
+                              strokeWidth: 8,
+                              backgroundColor: Colors.white.withValues(alpha: 0.05),
+                              color: accent,
+                              strokeCap: StrokeCap.round,
+                            );
+                          },
+                        ),
+                        // Inner content
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              _formatClock(_engine.remainingSeconds),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: focus ? 110 : 72,
+                                fontWeight: FontWeight.w800,
+                                color: Colors.white,
+                                letterSpacing: 2.0,
+                                height: 1.0,
+                              ),
+                            ).animate(target: focus ? 1 : 0).scale(
+                              begin: const Offset(1, 1),
+                              end: const Offset(1.1, 1.1),
+                              duration: 600.ms,
+                              curve: Curves.easeInOutCubic,
+                            ),
+                            const SizedBox(height: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                color: accent.withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Text(
+                                _modeLabel(_engine.mode),
+                                style: TextStyle(
+                                  color: accent,
+                                  letterSpacing: 1.0,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: focus ? 16 : 14,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                  ).animate(target: focus ? 1 : 0).scale(
+                    begin: const Offset(1, 1),
+                    end: const Offset(1.05, 1.05),
+                    duration: 600.ms,
+                    curve: Curves.easeInOutCubic,
+                  );
+                },
               ),
             ),
             Align(
