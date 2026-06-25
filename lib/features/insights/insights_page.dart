@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../data/todo_db.dart';
+import 'habit_heatmap.dart';
 
 class InsightsPage extends StatefulWidget {
   const InsightsPage({super.key});
@@ -14,6 +15,7 @@ class _InsightsPageState extends State<InsightsPage> {
   bool _loading = true;
   List<Map<String, dynamic>> _dailyStats = [];
   List<Map<String, dynamic>> _tagStats = [];
+  Map<DateTime, int> _heatmapData = {};
 
   @override
   void initState() {
@@ -25,11 +27,13 @@ class _InsightsPageState extends State<InsightsPage> {
     setState(() => _loading = true);
     final daily = await TodoDB.instance.getTimerDailyStats(limit: 7);
     final tag = await TodoDB.instance.getTimeSpentPerTag(7);
+    final heatmap = await TodoDB.instance.getHeatmapStats();
     if (!mounted) return;
     setState(() {
       // reverse daily stats so the oldest is first in the chart (left to right)
       _dailyStats = daily.reversed.toList();
       _tagStats = tag;
+      _heatmapData = heatmap;
       _loading = false;
     });
   }
@@ -254,9 +258,14 @@ class _InsightsPageState extends State<InsightsPage> {
             ],
           ).animate().fadeIn(duration: 400.ms, curve: Curves.easeOut).slideY(begin: -0.1),
           
-          const SizedBox(height: 8),
-          const Text('Last 7 Days', style: TextStyle(color: Colors.white54, fontSize: 16)),
+          const SizedBox(height: 12),
+          
+          HabitHeatmap(data: _heatmapData, accent: accent),
+          
           const SizedBox(height: 32),
+          
+          const Text('Last 7 Days (Timer)', style: TextStyle(color: Colors.white54, fontSize: 16)),
+          const SizedBox(height: 16),
 
           // Chart Section
           Container(

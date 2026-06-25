@@ -364,4 +364,24 @@ class TodoDB {
   Future<void> deleteSubtask(int id) async {
     await db.delete('subtasks', where: 'id = ?', whereArgs: [id]);
   }
+
+  Future<Map<DateTime, int>> getHeatmapStats() async {
+    final rows = await db.rawQuery('''
+      SELECT date, COUNT(id) as count
+      FROM todos
+      WHERE done = 1 OR status = 'done'
+      GROUP BY date
+    ''');
+    
+    final map = <DateTime, int>{};
+    for (final row in rows) {
+      final dateStr = row['date'] as String;
+      final count = (row['count'] as num).toInt();
+      try {
+        final d = DateTime.parse(dateStr);
+        map[DateTime(d.year, d.month, d.day)] = count;
+      } catch (_) {}
+    }
+    return map;
+  }
 }
