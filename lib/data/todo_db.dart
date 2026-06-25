@@ -1,5 +1,8 @@
 import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:sqflite/sqflite.dart';
+
+import 'dart:io';
 
 class TodoDB {
   static final TodoDB instance = TodoDB._internal();
@@ -8,8 +11,10 @@ class TodoDB {
   late Database db;
 
   Future<void> init() async {
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
 
     final dir = await getApplicationSupportDirectory();
     final path = '${dir.path}/pebble.db';
@@ -292,7 +297,7 @@ class TodoDB {
   }
 
   Future<List<String>> getUniqueTags() async {
-    final rows = await db.rawQuery('SELECT DISTINCT tag FROM todos WHERE tag IS NOT NULL AND tag != ""');
+    final rows = await db.rawQuery("SELECT DISTINCT tag FROM todos WHERE tag IS NOT NULL AND tag != ''");
     return rows.map((r) => r['tag'] as String).toList();
   }
 
