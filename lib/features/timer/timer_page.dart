@@ -430,12 +430,15 @@ class _TimerPageState extends State<TimerPage> {
                     },
                     child: const Text('Apply'),
                   ),
-                  SwitchListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Auto cycle'),
-                    value: _engine.autoCycle,
-                    onChanged: _engine.setAutoCycle,
+                  Material(
+                    color: Colors.transparent,
+                    child: SwitchListTile(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      title: const Text('Auto cycle'),
+                      value: _engine.autoCycle,
+                      onChanged: _engine.setAutoCycle,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   if (_todayTasks.isNotEmpty)

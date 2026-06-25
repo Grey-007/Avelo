@@ -588,108 +588,110 @@ class _CalendarPageState extends State<CalendarPage> {
 
                       final isDone = (t['done'] as int) == 1;
 
-                      return GestureDetector(
+                      return KeyedSubtree(
                         key: ValueKey(t['id']),
-                        onTap: () => _showEditTaskDialog(t),
-                        child: Container(
-                          margin: const EdgeInsets.symmetric(vertical: 6),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: isDone
-                                ? Colors.white.withValues(alpha: 0.02)
-                                : Colors.white.withValues(alpha: 0.05),
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border(
-                              left: BorderSide(
-                                width: 4,
-                                color: isDone ? accent.withValues(alpha: 0.3) : accent,
+                        child: GestureDetector(
+                          onTap: () => _showEditTaskDialog(t),
+                          child: Container(
+                            margin: const EdgeInsets.symmetric(vertical: 6),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: isDone
+                                  ? Colors.white.withValues(alpha: 0.02)
+                                  : Colors.white.withValues(alpha: 0.05),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border(
+                                left: BorderSide(
+                                  width: 4,
+                                  color: isDone ? accent.withValues(alpha: 0.3) : accent,
+                                ),
                               ),
                             ),
-                          ),
-                          child: Row(
-                            children: [
-                              // Checkbox
-                              GestureDetector(
-                                onTap: () async {
-                                  await TodoDB.instance.toggleDone(
-                                    t['id'] as int,
-                                    !isDone,
-                                  );
-                                  await loadTodos();
-                                },
-                                child: Icon(
-                                  isDone ? Icons.check_circle : Icons.circle_outlined,
-                                  size: 20,
-                                  color: isDone ? accent : Colors.white54,
-                                )
-                                    .animate()
-                                    .scale(curve: Curves.easeInOutCubic),
-                              ),
-                              const SizedBox(width: 10),
-                              // Task text
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      t['text'],
-                                      style: TextStyle(
-                                        color: isDone ? Colors.white54 : Colors.white,
-                                        decoration: isDone ? TextDecoration.lineThrough : null,
-                                        decorationColor: isDone ? Colors.white54 : null,
+                            child: Row(
+                              children: [
+                                // Checkbox
+                                GestureDetector(
+                                  onTap: () async {
+                                    await TodoDB.instance.toggleDone(
+                                      t['id'] as int,
+                                      !isDone,
+                                    );
+                                    await loadTodos();
+                                  },
+                                  child: Icon(
+                                    isDone ? Icons.check_circle : Icons.circle_outlined,
+                                    size: 20,
+                                    color: isDone ? accent : Colors.white54,
+                                  )
+                                      .animate()
+                                      .scale(curve: Curves.easeInOutCubic),
+                                ),
+                                const SizedBox(width: 10),
+                                // Task text
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        t['text'],
+                                        style: TextStyle(
+                                          color: isDone ? Colors.white54 : Colors.white,
+                                          decoration: isDone ? TextDecoration.lineThrough : null,
+                                          decorationColor: isDone ? Colors.white54 : null,
+                                        ),
                                       ),
-                                    ),
-                                    if ((t['subtask_count'] as int? ?? 0) > 0) ...[
-                                      const SizedBox(height: 4),
-                                      Row(
-                                        children: [
-                                          Icon(Icons.subdirectory_arrow_right, size: 12, color: isDone ? Colors.white24 : Colors.white54),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            '${t['subtask_done_count']} / ${t['subtask_count']} completed',
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              color: isDone ? Colors.white38 : Colors.white54,
+                                      if ((t['subtask_count'] as int? ?? 0) > 0) ...[
+                                        const SizedBox(height: 4),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.subdirectory_arrow_right, size: 12, color: isDone ? Colors.white24 : Colors.white54),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              '${t['subtask_done_count']} / ${t['subtask_count']} completed',
+                                              style: TextStyle(
+                                                fontSize: 11,
+                                                color: isDone ? Colors.white38 : Colors.white54,
+                                              ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                          ],
+                                        ),
+                                      ],
                                     ],
-                                  ],
+                                  ),
                                 ),
-                              ),
-                              // Tag if exists
-                              if (tag.isNotEmpty)
-                                Chip(
-                                  avatar: Icon(Icons.tag,
-                                      size: 14, color: tagColor),
-                                  label: Text(tag),
+                                // Tag if exists
+                                if (tag.isNotEmpty)
+                                  Chip(
+                                    avatar: Icon(Icons.tag,
+                                        size: 14, color: tagColor),
+                                    label: Text(tag),
+                                  ),
+                                const SizedBox(width: 8),
+                                // Delete button
+                                GestureDetector(
+                                  onTap: () async {
+                                    await TodoDB.instance.deleteTodo(
+                                      t['id'] as int,
+                                    );
+                                    await loadTodos();
+                                  },
+                                  child: Icon(
+                                    Icons.delete_outline,
+                                    size: 18,
+                                    color: Colors.redAccent.withValues(alpha: 0.7),
+                                  )
+                                      .animate()
+                                      .scale(curve: Curves.easeInOutCubic),
                                 ),
-                              const SizedBox(width: 8),
-                              // Delete button
-                              GestureDetector(
-                                onTap: () async {
-                                  await TodoDB.instance.deleteTodo(
-                                    t['id'] as int,
-                                  );
-                                  await loadTodos();
-                                },
-                                child: Icon(
-                                  Icons.delete_outline,
-                                  size: 18,
-                                  color: Colors.redAccent.withValues(alpha: 0.7),
-                                )
-                                    .animate()
-                                    .scale(curve: Curves.easeInOutCubic),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      )
-                          .animate()
-                          .fadeIn(delay: Duration(milliseconds: 100 + (i * 50)), duration: 300.ms, curve: Curves.easeInOutCubic)
-                          .slideY(begin: 0.2, delay: Duration(milliseconds: 100 + (i * 50)), duration: 300.ms, curve: Curves.easeOutCubic);
+                        )
+                            .animate()
+                            .fadeIn(delay: Duration(milliseconds: 100 + (i * 50)), duration: 300.ms, curve: Curves.easeInOutCubic)
+                            .slideY(begin: 0.2, delay: Duration(milliseconds: 100 + (i * 50)), duration: 300.ms, curve: Curves.easeOutCubic),
+                      );
                     },
                   ),
                 ),
