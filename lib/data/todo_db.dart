@@ -17,7 +17,7 @@ class TodoDB {
     }
 
     final dir = await getApplicationSupportDirectory();
-    final path = '${dir.path}/pebble.db';
+    final path = '${dir.path}/avelo.db';
 
     db = await openDatabase(
       path,

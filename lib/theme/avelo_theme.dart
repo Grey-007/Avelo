@@ -2,22 +2,22 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 
-class PebbleTheme extends ThemeExtension<PebbleTheme> {
+class AveloTheme extends ThemeExtension<AveloTheme> {
   final bool glass;
   final double panelOpacity;
   final double borderOpacity;
   final double blurSigma;
 
-  const PebbleTheme({
+  const AveloTheme({
     required this.glass,
     required this.panelOpacity,
     required this.borderOpacity,
     required this.blurSigma,
   });
 
-  static PebbleTheme of(BuildContext context) {
-    return Theme.of(context).extension<PebbleTheme>() ??
-        const PebbleTheme(
+  static AveloTheme of(BuildContext context) {
+    return Theme.of(context).extension<AveloTheme>() ??
+        const AveloTheme(
           glass: false,
           panelOpacity: 0.06,
           borderOpacity: 0.0,
@@ -26,13 +26,13 @@ class PebbleTheme extends ThemeExtension<PebbleTheme> {
   }
 
   @override
-  PebbleTheme copyWith({
+  AveloTheme copyWith({
     bool? glass,
     double? panelOpacity,
     double? borderOpacity,
     double? blurSigma,
   }) {
-    return PebbleTheme(
+    return AveloTheme(
       glass: glass ?? this.glass,
       panelOpacity: panelOpacity ?? this.panelOpacity,
       borderOpacity: borderOpacity ?? this.borderOpacity,
@@ -41,9 +41,9 @@ class PebbleTheme extends ThemeExtension<PebbleTheme> {
   }
 
   @override
-  PebbleTheme lerp(ThemeExtension<PebbleTheme>? other, double t) {
-    if (other is! PebbleTheme) return this;
-    return PebbleTheme(
+  AveloTheme lerp(ThemeExtension<AveloTheme>? other, double t) {
+    if (other is! AveloTheme) return this;
+    return AveloTheme(
       glass: t < 0.5 ? glass : other.glass,
       panelOpacity: lerpDouble(panelOpacity, other.panelOpacity, t) ??
           panelOpacity,
@@ -54,12 +54,12 @@ class PebbleTheme extends ThemeExtension<PebbleTheme> {
   }
 }
 
-class PebblePanel extends StatelessWidget {
+class AveloPanel extends StatelessWidget {
   final Widget child;
   final BorderRadius borderRadius;
   final EdgeInsetsGeometry padding;
 
-  const PebblePanel({
+  const AveloPanel({
     super.key,
     required this.child,
     this.borderRadius = const BorderRadius.all(Radius.circular(24)),
@@ -68,7 +68,7 @@ class PebblePanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ext = PebbleTheme.of(context);
+    final ext = AveloTheme.of(context);
 
     final panel = Container(
       padding: padding,
@@ -97,7 +97,7 @@ class PebblePanel extends StatelessWidget {
   }
 }
 
-enum PebbleThemeId {
+enum AveloThemeId {
   defaultTheme('default', 'Default'),
   amoled('amoled', 'Amoled (Glass)'),
   gruvbox('gruvbox', 'Gruvbox'),
@@ -112,33 +112,33 @@ enum PebbleThemeId {
 
   final String id;
   final String label;
-  const PebbleThemeId(this.id, this.label);
+  const AveloThemeId(this.id, this.label);
 
-  static PebbleThemeId fromId(String id) {
-    return PebbleThemeId.values.firstWhere(
+  static AveloThemeId fromId(String id) {
+    return AveloThemeId.values.firstWhere(
       (v) => v.id == id,
-      orElse: () => PebbleThemeId.defaultTheme,
+      orElse: () => AveloThemeId.defaultTheme,
     );
   }
 }
 
-class PebbleThemes {
+class AveloThemes {
   static ThemeData build({
-    required PebbleThemeId themeId,
+    required AveloThemeId themeId,
     required Color defaultAccent,
   }) {
     switch (themeId) {
-      case PebbleThemeId.defaultTheme:
+      case AveloThemeId.defaultTheme:
         return _default(defaultAccent);
-      case PebbleThemeId.amoled:
+      case AveloThemeId.amoled:
         return _amoled(defaultAccent);
-      case PebbleThemeId.glassmorphic:
+      case AveloThemeId.glassmorphic:
         return _glassmorphic(defaultAccent);
-      case PebbleThemeId.liquidGlass:
+      case AveloThemeId.liquidGlass:
         return _liquidGlass(defaultAccent);
-      case PebbleThemeId.normal:
+      case AveloThemeId.normal:
         return _normal(defaultAccent);
-      case PebbleThemeId.gruvbox:
+      case AveloThemeId.gruvbox:
         return _fixed(
           seed: const Color(0xFFD79921),
           secondary: const Color(0xFFB8BB26),
@@ -146,7 +146,7 @@ class PebbleThemes {
           surface: const Color(0xFF32302F),
           error: const Color(0xFFFB4934),
         );
-      case PebbleThemeId.everforest:
+      case AveloThemeId.everforest:
         return _fixed(
           seed: const Color(0xFFA7C080),
           secondary: const Color(0xFFDBBC7F),
@@ -154,7 +154,7 @@ class PebbleThemes {
           surface: const Color(0xFF3A454A),
           error: const Color(0xFFE67E80),
         );
-      case PebbleThemeId.nord:
+      case AveloThemeId.nord:
         return _fixed(
           seed: const Color(0xFF88C0D0),
           secondary: const Color(0xFF81A1C1),
@@ -162,7 +162,7 @@ class PebbleThemes {
           surface: const Color(0xFF3B4252),
           error: const Color(0xFFBF616A),
         );
-      case PebbleThemeId.tokyoNight:
+      case AveloThemeId.tokyoNight:
         return _fixed(
           seed: const Color(0xFF7AA2F7),
           secondary: const Color(0xFFBB9AF7),
@@ -170,7 +170,7 @@ class PebbleThemes {
           surface: const Color(0xFF24283B),
           error: const Color(0xFFF7768E),
         );
-      case PebbleThemeId.catppuccin:
+      case AveloThemeId.catppuccin:
         return _fixed(
           seed: const Color(0xFF89B4FA),
           secondary: const Color(0xFFF5C2E7),
@@ -204,7 +204,7 @@ class PebbleThemes {
       colorScheme: scheme,
       scaffoldBackgroundColor: background,
       extensions: const [
-        PebbleTheme(
+        AveloTheme(
           glass: false,
           panelOpacity: 0.06,
           borderOpacity: 0.0,
@@ -224,7 +224,7 @@ class PebbleThemes {
       brightness: Brightness.dark,
       colorScheme: scheme,
       extensions: const [
-        PebbleTheme(
+        AveloTheme(
           glass: false,
           panelOpacity: 0.06,
           borderOpacity: 0.0,
@@ -257,7 +257,7 @@ class PebbleThemes {
       dialogTheme: const DialogThemeData(backgroundColor: background),
       canvasColor: Colors.black,
       extensions: const [
-        PebbleTheme(
+        AveloTheme(
           glass: true,
           panelOpacity: 0.06,
           borderOpacity: 0.14,
@@ -280,7 +280,7 @@ class PebbleThemes {
       colorScheme: scheme,
       scaffoldBackgroundColor: background,
       extensions: const [
-        PebbleTheme(
+        AveloTheme(
           glass: true,
           panelOpacity: 0.12,
           borderOpacity: 0.25,
@@ -303,7 +303,7 @@ class PebbleThemes {
       colorScheme: scheme,
       scaffoldBackgroundColor: background,
       extensions: const [
-        PebbleTheme(
+        AveloTheme(
           glass: true,
           panelOpacity: 0.04,
           borderOpacity: 0.45,
@@ -323,7 +323,7 @@ class PebbleThemes {
       brightness: Brightness.dark,
       colorScheme: scheme,
       extensions: const [
-        PebbleTheme(
+        AveloTheme(
           glass: false,
           panelOpacity: 0.08,
           borderOpacity: 0.05,

@@ -1,6 +1,6 @@
-# Pebble - Feature Roadmap & Plan
+# Avelo - Feature Roadmap & Plan
 
-Pebble is evolving into a beautiful, minimal, and highly effective productivity tool. Based on the current architecture (calendar-based tasks, timers, timelines, and rich themes), here is a proposed list of new features to elevate the app.
+Avelo is evolving into a beautiful, minimal, and highly effective productivity tool. Based on the current architecture (calendar-based tasks, timers, timelines, and rich themes), here is a proposed list of new features to elevate the app.
 
 ## 1. Timer-to-Task Integration
 **Concept:** Currently, the timer and tasks are somewhat separate. This feature will allow you to link a Pomodoro session directly to a specific task.

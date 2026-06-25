@@ -1,4 +1,4 @@
-package com.example.pebble
+package com.example.avelo
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -4,7 +4,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 void main() async {
   sqfliteFfiInit();
   var dbFactory = databaseFactoryFfi;
-  final dbPath = '/home/grey/.local/share/com.example.pebble/pebble.db';
+  final dbPath = '/home/grey/.local/share/com.example.avelo/avelo.db';
   if (!File(dbPath).existsSync()) {
     print('DB not found');
     return;

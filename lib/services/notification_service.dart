@@ -6,7 +6,7 @@ class NotificationService {
       if (Platform.isLinux) {
         await Process.run('notify-send', [
           '-a',
-          'Pebble',
+          'Avelo',
           '-t',
           '5000', // 5 seconds
           title,

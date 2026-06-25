@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../../theme/pebble_theme.dart';
+import '../../theme/avelo_theme.dart';
 
 class SettingsPage extends StatelessWidget {
-  final PebbleThemeId themeId;
-  final ValueChanged<PebbleThemeId> onThemeChange;
+  final AveloThemeId themeId;
+  final ValueChanged<AveloThemeId> onThemeChange;
   final Color defaultAccent;
   final ValueChanged<Color> onAccentChange;
   const SettingsPage({
@@ -17,32 +17,32 @@ class SettingsPage extends StatelessWidget {
   });
 
   bool get _showAccentPicker =>
-      themeId == PebbleThemeId.defaultTheme ||
-      themeId == PebbleThemeId.amoled ||
-      themeId == PebbleThemeId.glassmorphic ||
-      themeId == PebbleThemeId.liquidGlass ||
-      themeId == PebbleThemeId.normal;
+      themeId == AveloThemeId.defaultTheme ||
+      themeId == AveloThemeId.amoled ||
+      themeId == AveloThemeId.glassmorphic ||
+      themeId == AveloThemeId.liquidGlass ||
+      themeId == AveloThemeId.normal;
 
-  List<PebbleThemeId> get _themes => const [
-        PebbleThemeId.defaultTheme,
-        PebbleThemeId.amoled,
-        PebbleThemeId.glassmorphic,
-        PebbleThemeId.liquidGlass,
-        PebbleThemeId.normal,
-        PebbleThemeId.gruvbox,
-        PebbleThemeId.everforest,
-        PebbleThemeId.nord,
-        PebbleThemeId.tokyoNight,
-        PebbleThemeId.catppuccin,
+  List<AveloThemeId> get _themes => const [
+        AveloThemeId.defaultTheme,
+        AveloThemeId.amoled,
+        AveloThemeId.glassmorphic,
+        AveloThemeId.liquidGlass,
+        AveloThemeId.normal,
+        AveloThemeId.gruvbox,
+        AveloThemeId.everforest,
+        AveloThemeId.nord,
+        AveloThemeId.tokyoNight,
+        AveloThemeId.catppuccin,
       ];
 
-  String _themeDescription(PebbleThemeId id) {
+  String _themeDescription(AveloThemeId id) {
     return switch (id) {
-      PebbleThemeId.defaultTheme => 'Seeded accent + pick your color',
-      PebbleThemeId.amoled => 'Pure black + glass panels + pick your color',
-      PebbleThemeId.glassmorphic => 'Glass effect with strong borders + pick your color',
-      PebbleThemeId.liquidGlass => 'High blur liquid effect + pick your color',
-      PebbleThemeId.normal => 'Standard dark theme + pick your color',
+      AveloThemeId.defaultTheme => 'Seeded accent + pick your color',
+      AveloThemeId.amoled => 'Pure black + glass panels + pick your color',
+      AveloThemeId.glassmorphic => 'Glass effect with strong borders + pick your color',
+      AveloThemeId.liquidGlass => 'High blur liquid effect + pick your color',
+      AveloThemeId.normal => 'Standard dark theme + pick your color',
       _ => 'Fixed palette',
     };
   }
@@ -69,14 +69,14 @@ class SettingsPage extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          DropdownMenu<PebbleThemeId>(
+          DropdownMenu<AveloThemeId>(
             initialSelection: themeId,
             onSelected: (v) {
               if (v != null) onThemeChange(v);
             },
             dropdownMenuEntries: _themes
                 .map(
-                  (t) => DropdownMenuEntry<PebbleThemeId>(
+                  (t) => DropdownMenuEntry<AveloThemeId>(
                     value: t,
                     label: t.label,
                   ),
@@ -141,7 +141,7 @@ class SettingsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Pebble',
+                  'Avelo',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
@@ -165,7 +165,7 @@ class SettingsPage extends StatelessWidget {
 
                 const SizedBox(height: 6),
                 const Text(
-                  'github.com/Grey-007/pebble',
+                  'github.com/Grey-007/avelo',
                   style: TextStyle(color: Colors.white70),
                 ),
 

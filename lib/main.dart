@@ -13,7 +13,7 @@ import 'features/timeline/timeline_page.dart';
 import 'features/insights/insights_page.dart';
 import 'features/settings/settings_page.dart';
 import 'services/notification_service.dart';
-import 'theme/pebble_theme.dart';
+import 'theme/avelo_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,14 +24,14 @@ void main() async {
   final savedAccent = await TodoDB.instance.getSetting('accent');
 
   final themeId = savedTheme == null
-      ? PebbleThemeId.defaultTheme
-      : PebbleThemeId.fromId(savedTheme);
+      ? AveloThemeId.defaultTheme
+      : AveloThemeId.fromId(savedTheme);
 
   final accent = savedAccent == null
       ? const Color(0xFF1DB954)
       : Color(int.tryParse(savedAccent) ?? 0xFF1DB954);
 
-  runApp(PebbleApp(initialThemeId: themeId, initialAccent: accent));
+  runApp(AveloApp(initialThemeId: themeId, initialAccent: accent));
 }
 
 Future<void> _configureWindow() async {
@@ -46,22 +46,22 @@ Future<void> _configureWindow() async {
   });
 }
 
-class PebbleApp extends StatefulWidget {
-  final PebbleThemeId initialThemeId;
+class AveloApp extends StatefulWidget {
+  final AveloThemeId initialThemeId;
   final Color initialAccent;
-  const PebbleApp({
+  const AveloApp({
     super.key,
     required this.initialThemeId,
     required this.initialAccent,
   });
 
   @override
-  State<PebbleApp> createState() => _PebbleAppState();
+  State<AveloApp> createState() => _AveloAppState();
 }
 
-class _PebbleAppState extends State<PebbleApp> {
+class _AveloAppState extends State<AveloApp> {
   late Color accent;
-  late PebbleThemeId themeId;
+  late AveloThemeId themeId;
   Timer? _reminderTimer;
   final Set<int> _notifiedTodoIds = {};
 
@@ -106,7 +106,7 @@ class _PebbleAppState extends State<PebbleApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: PebbleThemes.build(themeId: themeId, defaultAccent: accent),
+      theme: AveloThemes.build(themeId: themeId, defaultAccent: accent),
       home: AppShell(
         themeId: themeId,
         onThemeChange: (t) {
@@ -124,8 +124,8 @@ class _PebbleAppState extends State<PebbleApp> {
 }
 
 class AppShell extends StatefulWidget {
-  final PebbleThemeId themeId;
-  final ValueChanged<PebbleThemeId> onThemeChange;
+  final AveloThemeId themeId;
+  final ValueChanged<AveloThemeId> onThemeChange;
   final Color defaultAccent;
   final ValueChanged<Color> onAccentChange;
   const AppShell({
@@ -164,7 +164,7 @@ class _AppShellState extends State<AppShell> {
       ),
     ];
 
-    final glass = PebbleTheme.of(context).glass;
+    final glass = AveloTheme.of(context).glass;
 
     return Scaffold(
       body: Stack(
@@ -270,7 +270,7 @@ class _SideNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent = Theme.of(context).colorScheme.primary;
-    final glass = PebbleTheme.of(context).glass;
+    final glass = AveloTheme.of(context).glass;
 
     final icons = [
       Icons.calendar_month, // Calendar
@@ -309,7 +309,7 @@ class _SideNav extends StatelessWidget {
     if (glass) {
       return Padding(
         padding: outerPadding,
-        child: PebblePanel(
+        child: AveloPanel(
           borderRadius: BorderRadius.circular(22),
           child: content,
         ),
@@ -432,7 +432,7 @@ class _ContentShell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
           padding: const EdgeInsets.fromLTRB(12, 12, 18, 18),
-          child: PebblePanel(child: child),
+          child: AveloPanel(child: child),
         )
         .animate()
         .fadeIn(duration: 600.ms, curve: Curves.easeInOutCubic)

@@ -1,6 +1,6 @@
 {
-    "name": "pebble",
-    "short_name": "pebble",
+    "name": "avelo",
+    "short_name": "avelo",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
