@@ -23,6 +23,12 @@ class _TimerEngine extends ChangeNotifier {
   int _activeSessionSeconds = 25 * 60;
   int statsRevision = 0;
   bool _transitioning = false;
+  int? linkedTaskId;
+
+  void linkTask(int? taskId) {
+    linkedTaskId = taskId;
+    notifyListeners();
+  }
 
   int get currentSessionTotalSeconds => _activeSessionSeconds;
   int get currentSessionElapsedSeconds =>
@@ -120,6 +126,7 @@ class _TimerEngine extends ChangeNotifier {
       date: _dateKey(DateTime.now()),
       type: finishedMode == _TimerMode.work ? 'work' : 'break',
       seconds: finishedSeconds,
+      taskId: finishedMode == _TimerMode.work ? linkedTaskId : null,
     );
     statsRevision += 1;
 
@@ -180,6 +187,7 @@ class _TimerPageState extends State<TimerPage> {
 
   Map<String, int> _todayTotals = {'work': 0, 'break': 0, 'total': 0};
   List<Map<String, dynamic>> _dailyStats = [];
+  List<Map<String, dynamic>> _todayTasks = [];
 
   @override
   void initState() {
@@ -189,6 +197,14 @@ class _TimerPageState extends State<TimerPage> {
     _scrollCtrl = ScrollController()..addListener(_onScroll);
     _engine.addListener(_onEngineTick);
     _loadStats();
+    _loadTasks();
+  }
+
+  Future<void> _loadTasks() async {
+    final today = DateTime.now().toIso8601String().split('T')[0];
+    final tasks = await TodoDB.instance.getTodos(today);
+    if (!mounted) return;
+    setState(() => _todayTasks = tasks);
   }
 
   @override
@@ -391,6 +407,24 @@ class _TimerPageState extends State<TimerPage> {
                     value: _engine.autoCycle,
                     onChanged: _engine.setAutoCycle,
                   ),
+                  const SizedBox(height: 8),
+                  if (_todayTasks.isNotEmpty)
+                    DropdownMenu<int?>(
+                      initialSelection: _engine.linkedTaskId,
+                      hintText: 'Link to task',
+                      width: 240,
+                      onSelected: (v) {
+                        _engine.linkTask(v);
+                        setState(() {});
+                      },
+                      dropdownMenuEntries: [
+                        const DropdownMenuEntry<int?>(value: null, label: 'None'),
+                        ..._todayTasks.map((t) => DropdownMenuEntry<int?>(
+                          value: t['id'] as int,
+                          label: t['text'].toString(),
+                        )),
+                      ],
+                    ),
                 ],
               ),
             ),

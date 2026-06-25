@@ -16,7 +16,7 @@ class TodoDB {
 
     db = await openDatabase(
       path,
-      version: 4,
+      version: 5,
       onCreate: (db, _) async {
         await db.execute('''
           CREATE TABLE todos (
@@ -34,6 +34,7 @@ class TodoDB {
             date TEXT NOT NULL,
             type TEXT NOT NULL,
             seconds INTEGER NOT NULL,
+            task_id INTEGER,
             created_at TEXT NOT NULL
           )
         ''');
@@ -67,6 +68,9 @@ class TodoDB {
               value TEXT NOT NULL
             )
           ''');
+        }
+        if (old < 5) {
+          await db.execute('ALTER TABLE timer_logs ADD COLUMN task_id INTEGER');
         }
       },
     );
@@ -159,11 +163,13 @@ class TodoDB {
     required String date,
     required String type,
     required int seconds,
+    int? taskId,
   }) async {
     await db.insert('timer_logs', {
       'date': date,
       'type': type,
       'seconds': seconds,
+      'task_id': taskId,
       'created_at': DateTime.now().toIso8601String(),
     });
   }
